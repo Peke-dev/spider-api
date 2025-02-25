@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { Firestore, CollectionReference, DocumentData } from '@google-cloud/firestore';
+import {
+  Firestore,
+  CollectionReference,
+  DocumentData,
+} from 'firebase-admin/firestore';
 
 import { RepositoryService } from '@modules/database/services';
-import { exist } from 'joi';
 
 // Mock interface for testing
 interface TestEntity {
@@ -15,13 +18,13 @@ interface TestEntity {
 describe('RepositoryService', () => {
   let service: RepositoryService<TestEntity>;
   let firestore: Firestore;
-  let collectionMock: jest.Mocked<CollectionReference<DocumentData>>;
+  let collectionMock: CollectionReference<DocumentData>;
 
   const mockCollection = 'test-collection';
   const mockEntity: TestEntity = {
     id: '1',
     name: 'Test',
-    value: 123
+    value: 123,
   };
 
   beforeAll(async () => {
@@ -31,25 +34,26 @@ describe('RepositoryService', () => {
       where: jest.fn(),
       get: jest.fn(),
       orderBy: jest.fn(),
-      limit: jest.fn()
+      limit: jest.fn(),
     } as any;
 
     // Create mock firestore
     firestore = {
-      collection: jest.fn().mockReturnValue(collectionMock)
+      collection: jest.fn().mockReturnValue(collectionMock),
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: Firestore,
-          useValue: firestore
+          useValue: firestore,
         },
         {
           provide: mockCollection,
-          useFactory: (firestore) => new RepositoryService(firestore, mockCollection),
-          inject: [Firestore]
-        }
+          useFactory: (firestore) =>
+            new RepositoryService(firestore, mockCollection),
+          inject: [Firestore],
+        },
       ],
     }).compile();
 
@@ -60,15 +64,15 @@ describe('RepositoryService', () => {
     it('should return all documents', async () => {
       const mockDocs = [
         { id: '1', data: () => ({ ...mockEntity }) },
-        { id: '2', data: () => ({ ...mockEntity, id: '2' }) }
+        { id: '2', data: () => ({ ...mockEntity, id: '2' }) },
       ];
-      
+
       collectionMock.orderBy = jest.fn().mockReturnValue({
         limit: jest.fn().mockReturnValue({
           get: jest.fn().mockResolvedValue({
-            docs: mockDocs
-          })
-        })
+            docs: mockDocs,
+          }),
+        }),
       });
 
       const result = await service.findAll();
@@ -81,9 +85,9 @@ describe('RepositoryService', () => {
       collectionMock.orderBy = jest.fn().mockReturnValue({
         limit: jest.fn().mockReturnValue({
           get: jest.fn().mockResolvedValue({
-            docs: []
-          })
-        })
+            docs: [],
+          }),
+        }),
       });
 
       const result = await service.findAll();
@@ -98,8 +102,12 @@ describe('RepositoryService', () => {
     });
 
     it('should return a document', async () => {
-      const mockDocs = { id: '1',exists: true, data: () => ({ ...mockEntity }) }
-      
+      const mockDocs = {
+        id: '1',
+        exists: true,
+        data: () => ({ ...mockEntity }),
+      };
+
       collectionMock.doc = jest.fn().mockReturnValue({
         get: jest.fn().mockResolvedValue(mockDocs),
       });
@@ -113,8 +121,8 @@ describe('RepositoryService', () => {
       collectionMock.doc = jest.fn().mockReturnValue({
         exist: false,
         get: jest.fn().mockResolvedValue({
-          docs: null
-        })
+          docs: null,
+        }),
       });
 
       const result = await service.findOneById(mockEntity.id);
@@ -122,4 +130,4 @@ describe('RepositoryService', () => {
       expect(result).toEqual(null);
     });
   });
-}); 
+});

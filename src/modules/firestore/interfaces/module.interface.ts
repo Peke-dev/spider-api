@@ -1,3 +1,5 @@
+import { InjectionToken, OptionalFactoryDependency } from '@nestjs/common';
+
 import { ServiceAccount } from 'firebase-admin/app';
 
 export class FirestoreModuleOptions {
@@ -5,7 +7,7 @@ export class FirestoreModuleOptions {
 }
 
 export class FirestoreModuleOptionsAsync {
-  inject?: any[] = [];
-  useFactory: (...args: any[]) => FirestoreModuleOptions;
+  inject?: (InjectionToken | OptionalFactoryDependency)[] = [];
+  useFactory: (...args: unknown[]) => FirestoreModuleOptions;
   global?: boolean;
 }

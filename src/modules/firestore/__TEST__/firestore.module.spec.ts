@@ -15,7 +15,7 @@ describe('FirestoreModule', () => {
     serviceAccount: {
       projectId: 'test-project',
       clientEmail: 'test@email.com',
-      privateKey: 'test_private_key'
+      privateKey: 'test_private_key',
     },
   };
 
@@ -24,25 +24,25 @@ describe('FirestoreModule', () => {
       module = await Test.createTestingModule({
         imports: [
           FirestoreModule.registerAsync({
-            useFactory: () => moduleOptionsMock
+            useFactory: () => moduleOptionsMock,
           }),
         ],
       }).compile();
-    })
+    });
 
-    it('should create a dynamic module with async options', async () => {
-      const options = module.get(CONFIG_PROVIDER_KEY);
+    it('should create a dynamic module with async options', () => {
+      const options = module.get<FirestoreModuleOptions>(CONFIG_PROVIDER_KEY);
       expect(options).toEqual(moduleOptionsMock);
     });
 
-    it('should call initializeApp with the correct options', async () => {
+    it('should call initializeApp with the correct options', () => {
       expect(initializeApp).toHaveBeenCalledWith({
         credential: cert(moduleOptionsMock.serviceAccount),
       });
     });
 
-    it('should call getFirestore', async () => {
+    it('should call getFirestore', () => {
       expect(getFirestore).toHaveBeenCalled();
     });
   });
-}); 
+});

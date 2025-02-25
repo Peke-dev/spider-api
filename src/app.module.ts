@@ -1,12 +1,16 @@
-import { Module } from '@nestjs/common';
+import { ConsoleLogger, Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 
 import { FirestoreModule } from '@modules/firestore';
 import { configuration, GlobalConfigType, validationSchema } from '@config';
 
+export class LogService extends ConsoleLogger {}
+
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `${process.env.NODE_ENV}.env`,

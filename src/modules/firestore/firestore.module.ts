@@ -2,7 +2,10 @@ import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { CONFIG_PROVIDER_KEY } from './constants';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
-import { FirestoreModuleOptions, FirestoreModuleOptionsAsync } from './interfaces';
+import {
+  FirestoreModuleOptions,
+  FirestoreModuleOptionsAsync,
+} from './interfaces';
 
 @Module({})
 export class FirestoreModule {
@@ -35,7 +38,7 @@ export class FirestoreModule {
   static getConfigProvider(options: FirestoreModuleOptionsAsync): Provider {
     return {
       provide: CONFIG_PROVIDER_KEY,
-      useFactory: (...services) => options.useFactory(...services),
+      useFactory: (...services: unknown[]) => options.useFactory(...services),
       inject: [...(options.inject || [])],
     };
   }
