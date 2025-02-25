@@ -1,0 +1,1 @@
+export const CONFIG_PROVIDER_KEY = 'CONFIG_PROVIDER';
