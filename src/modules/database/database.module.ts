@@ -1,15 +1,13 @@
 import { Module, DynamicModule } from '@nestjs/common';
-import { RepositoryService } from './services/repository.service';
-import { FirestoreModule } from '../firestore/firestore.module';
 import { Firestore } from 'firebase-admin/firestore';
 
-export class DbModuleOptions {
-  collection: string;
-}
+import { FirestoreRepository } from './repositories/firestore.repository';
+import { FirestoreModule } from '../firestore/firestore.module';
+import { DbModuleOptionsInterface } from './interfaces';
 
 @Module({})
 export class DatabaseModule {
-  static forFeature(models: DbModuleOptions[]): DynamicModule {
+  static forFeature(models: DbModuleOptionsInterface[]): DynamicModule {
     return {
       module: DatabaseModule,
       imports: [FirestoreModule],
@@ -17,7 +15,7 @@ export class DatabaseModule {
         return {
           provide: collection,
           useFactory: (firestore: Firestore) =>
-            new RepositoryService(firestore, collection),
+            new FirestoreRepository(firestore, collection),
           inject: [Firestore],
         };
       }),

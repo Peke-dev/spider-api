@@ -6,7 +6,7 @@ import {
   DocumentData,
 } from 'firebase-admin/firestore';
 
-import { RepositoryService } from '@modules/database/services';
+import { RepositoryService } from '@modules/database/repositories';
 
 // Mock interface for testing
 interface TestEntity {
