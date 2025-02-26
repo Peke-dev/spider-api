@@ -1,12 +1,13 @@
-import { ConsoleLogger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { FirestoreModule } from '@modules/firestore';
 import { configuration, GlobalConfigType, validationSchema } from '@config';
-
-export class LogService extends ConsoleLogger {}
+import { MatchesModule } from '@modules/matches';
+import { ResponseInterceptor } from '@common/interceptors';
 
 @Module({
   imports: [
@@ -28,6 +29,13 @@ export class LogService extends ConsoleLogger {}
       }),
       inject: [configuration.KEY],
     }),
+    MatchesModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
   ],
 })
 export class AppModule {}

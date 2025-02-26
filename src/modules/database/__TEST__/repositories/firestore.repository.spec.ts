@@ -1,12 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import {
-  Firestore,
-  CollectionReference,
-  DocumentData,
-} from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 
-import { RepositoryService } from '@modules/database/repositories';
+import { FirestoreRepository } from '@modules/database';
 
 // Mock interface for testing
 interface TestEntity {
@@ -16,9 +12,20 @@ interface TestEntity {
 }
 
 describe('RepositoryService', () => {
-  let service: RepositoryService<TestEntity>;
-  let firestore: Firestore;
-  let collectionMock: CollectionReference<DocumentData>;
+  let service: FirestoreRepository<TestEntity>;
+
+  const collectionMock = {
+    doc: jest.fn(),
+    add: jest.fn(),
+    where: jest.fn(),
+    get: jest.fn(),
+    orderBy: jest.fn(),
+    limit: jest.fn(),
+  };
+
+  const firestoreMock = {
+    collection: jest.fn().mockReturnValue(collectionMock),
+  } as any;
 
   const mockCollection = 'test-collection';
   const mockEntity: TestEntity = {
@@ -28,36 +35,22 @@ describe('RepositoryService', () => {
   };
 
   beforeAll(async () => {
-    collectionMock = {
-      doc: jest.fn(),
-      add: jest.fn(),
-      where: jest.fn(),
-      get: jest.fn(),
-      orderBy: jest.fn(),
-      limit: jest.fn(),
-    } as any;
-
-    // Create mock firestore
-    firestore = {
-      collection: jest.fn().mockReturnValue(collectionMock),
-    } as any;
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: Firestore,
-          useValue: firestore,
+          useValue: firestoreMock,
         },
         {
           provide: mockCollection,
           useFactory: (firestore) =>
-            new RepositoryService(firestore, mockCollection),
+            new FirestoreRepository(firestore, mockCollection),
           inject: [Firestore],
         },
       ],
     }).compile();
 
-    service = module.get<RepositoryService<TestEntity>>(mockCollection);
+    service = module.get<FirestoreRepository<TestEntity>>(mockCollection);
   });
 
   describe('when findAll method is called', () => {
@@ -68,10 +61,8 @@ describe('RepositoryService', () => {
       ];
 
       collectionMock.orderBy = jest.fn().mockReturnValue({
-        limit: jest.fn().mockReturnValue({
-          get: jest.fn().mockResolvedValue({
-            docs: mockDocs,
-          }),
+        get: jest.fn().mockResolvedValue({
+          docs: mockDocs,
         }),
       });
 
@@ -83,10 +74,8 @@ describe('RepositoryService', () => {
 
     it('should return empty array when no documents exist', async () => {
       collectionMock.orderBy = jest.fn().mockReturnValue({
-        limit: jest.fn().mockReturnValue({
-          get: jest.fn().mockResolvedValue({
-            docs: [],
-          }),
+        get: jest.fn().mockResolvedValue({
+          docs: [],
         }),
       });
 
