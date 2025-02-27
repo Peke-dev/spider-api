@@ -36,11 +36,11 @@ describe('FindMatchByIdService', () => {
       result = await service.run('1');
     });
 
-    it('should return a match when found', async () => {
+    it('should return a match when found', () => {
       expect(result).toEqual(mockMatch);
     });
 
-    it('should call the repository with the correct id', async () => {
+    it('should call the repository with the correct id', () => {
       expect(matchRepositoryMock.findOneById).toHaveBeenCalledWith('1');
     });
   });
