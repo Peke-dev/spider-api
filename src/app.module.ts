@@ -9,6 +9,8 @@ import { configuration, GlobalConfigType, validationSchema } from '@config';
 import { MatchesModule } from '@modules/matches';
 import { ResponseInterceptor } from '@common/interceptors';
 import { LeaguesModule } from '@modules/leagues';
+import { AccountsModule } from '@modules/accounts';
+
 @Module({
   imports: [
     LoggerModule.forRoot(),
@@ -31,6 +33,7 @@ import { LeaguesModule } from '@modules/leagues';
     }),
     MatchesModule,
     LeaguesModule,
+    AccountsModule,
   ],
   providers: [
     {
