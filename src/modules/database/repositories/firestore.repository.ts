@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
+
 import { Firestore, CollectionReference } from 'firebase-admin/firestore';
-import { RepositoryInterface } from '../interfaces/repository.interface';
+
+import {
+  FindAllOptionsInterface,
+  RepositoryInterface,
+} from '../interfaces/repository.interface';
 
 @Injectable()
 export class FirestoreRepository<T> implements RepositoryInterface<T> {
@@ -12,8 +17,10 @@ export class FirestoreRepository<T> implements RepositoryInterface<T> {
     this.docRef = this.firestore.collection(collection);
   }
 
-  async findAll(): Promise<T[]> {
-    const snapshot = await this.docRef.orderBy('date', 'desc').get();
+  async findAll(options: FindAllOptionsInterface = {}): Promise<T[]> {
+    const { orderBy = 'createdAt', order = 'desc' } = options;
+
+    const snapshot = await this.docRef.orderBy(orderBy, order).get();
 
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as T);
   }

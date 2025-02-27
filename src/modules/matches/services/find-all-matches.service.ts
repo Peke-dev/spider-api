@@ -12,6 +12,8 @@ export class FindAllMatchesService {
   ) {}
 
   run(): Promise<Match[]> {
-    return this.matchesRepository.findAll();
+    return this.matchesRepository.findAll({
+      orderBy: 'date',
+    });
   }
 }
