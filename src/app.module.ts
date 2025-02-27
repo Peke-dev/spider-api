@@ -8,7 +8,7 @@ import { FirestoreModule } from '@modules/firestore';
 import { configuration, GlobalConfigType, validationSchema } from '@config';
 import { MatchesModule } from '@modules/matches';
 import { ResponseInterceptor } from '@common/interceptors';
-
+import { LeaguesModule } from '@modules/leagues';
 @Module({
   imports: [
     LoggerModule.forRoot(),
@@ -30,6 +30,7 @@ import { ResponseInterceptor } from '@common/interceptors';
       inject: [configuration.KEY],
     }),
     MatchesModule,
+    LeaguesModule,
   ],
   providers: [
     {
