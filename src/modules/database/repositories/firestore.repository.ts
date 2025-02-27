@@ -8,7 +8,9 @@ import {
 } from '../interfaces/repository.interface';
 
 @Injectable()
-export class FirestoreRepository<T> implements RepositoryInterface<T> {
+export class FirestoreRepository<T extends Record<string, any>>
+  implements RepositoryInterface<T>
+{
   private readonly docRef: CollectionReference;
   constructor(
     private readonly firestore: Firestore,
@@ -22,7 +24,9 @@ export class FirestoreRepository<T> implements RepositoryInterface<T> {
 
     const snapshot = await this.docRef.orderBy(orderBy, order).get();
 
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as T);
+    return snapshot.docs.map(
+      (doc) => ({ id: doc.id, ...doc.data() }) as unknown as T,
+    );
   }
 
   async findOneById(id: string): Promise<T | null> {
@@ -32,6 +36,28 @@ export class FirestoreRepository<T> implements RepositoryInterface<T> {
       return null;
     }
 
-    return { id: doc.id, ...doc.data() } as T;
+    return { id: doc.id, ...doc.data() } as unknown as T;
+  }
+
+  async create(
+    data: T & { createdAt: Date; updatedAt: Date },
+  ): Promise<string> {
+    const date = new Date();
+    const docRef = this.docRef.doc();
+
+    const { ...d } = data;
+
+    d.createdAt = date;
+    d.updatedAt = date;
+
+    await docRef.set(d);
+    return docRef.id;
+  }
+
+  async update(id: string, data: T & { updatedAt: Date }): Promise<string> {
+    data.updatedAt = new Date();
+    const docRef = this.docRef.doc(id);
+    await docRef.update(data);
+    return id;
   }
 }

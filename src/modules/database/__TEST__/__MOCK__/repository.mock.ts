@@ -8,4 +8,6 @@ export const repositoryMock = {
 export const createRepositoryMock = <T>(): RepositoryInterface<T> => ({
   findAll: jest.fn(),
   findOneById: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
 });
