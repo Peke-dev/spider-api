@@ -1,17 +1,17 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RepositoryInterface } from '@modules/database';
 
-import { Account } from '../entities';
 import { ACCOUNTS_COLLECTION } from '../constants';
+import { Account } from '../entities';
 
 @Injectable()
-export class FindAccountByIdService {
+export class FindAccountByService {
   constructor(
     @Inject(ACCOUNTS_COLLECTION)
     private readonly accountsRepository: RepositoryInterface<Account>,
   ) {}
 
-  run(id: string): Promise<Account | null> {
-    return this.accountsRepository.findOneById(id);
+  async run(key: string, value: any): Promise<Account | null> {
+    return this.accountsRepository.findOneBy(key, value);
   }
 }

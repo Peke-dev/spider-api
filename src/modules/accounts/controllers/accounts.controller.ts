@@ -1,13 +1,25 @@
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
-
-import { FindAllAccountsService, FindAccountByIdService } from '../services/';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  FindAllAccountsService,
+  FindAccountByIdService,
+  CreateAccountService,
+} from '../services/';
 import { Account } from '../entities';
+import { CreateAccountDto } from '../dto';
 
 @Controller('accounts')
 export class AccountsController {
   constructor(
     private readonly findAccountByIdService: FindAccountByIdService,
     private readonly findAllAccountsService: FindAllAccountsService,
+    private readonly createAccountService: CreateAccountService,
   ) {}
 
   @Get()
@@ -24,5 +36,10 @@ export class AccountsController {
     }
 
     return account;
+  }
+
+  @Post()
+  create(@Body() createAccountDto: CreateAccountDto): Promise<string> {
+    return this.createAccountService.run(createAccountDto);
   }
 }

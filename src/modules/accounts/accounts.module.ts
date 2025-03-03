@@ -3,6 +3,7 @@ import { DatabaseModule } from '@modules/database';
 import * as services from './services';
 import * as controllers from './controllers';
 import { ACCOUNTS_COLLECTION } from './constants';
+import * as Services from './services';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ACCOUNTS_COLLECTION } from './constants';
     ]),
   ],
   providers: [...Object.values(services)],
-  exports: [...Object.values(services)],
+  exports: [...Object.values(Services)],
   controllers: [...Object.values(controllers)],
 })
 export class AccountsModule {}
