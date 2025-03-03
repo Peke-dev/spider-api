@@ -10,6 +10,7 @@ import { MatchesModule } from '@modules/matches';
 import { ResponseInterceptor } from '@common/interceptors';
 import { LeaguesModule } from '@modules/leagues';
 import { AccountsModule } from '@modules/accounts';
+import { AuthModule } from '@modules/auth';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AccountsModule } from '@modules/accounts';
     MatchesModule,
     LeaguesModule,
     AccountsModule,
+    AuthModule,
   ],
   providers: [
     {
