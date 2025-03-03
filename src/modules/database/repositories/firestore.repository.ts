@@ -39,13 +39,25 @@ export class FirestoreRepository<T extends Record<string, any>>
     return { id: doc.id, ...doc.data() } as unknown as T;
   }
 
+  async findOneBy(key: string, value: any): Promise<T | null> {
+    const snapshot = await this.docRef.where(key, '==', value).limit(1).get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as unknown as T;
+  }
+
   async create(
     data: T & { createdAt: Date; updatedAt: Date },
   ): Promise<string> {
     const date = new Date();
-    const docRef = this.docRef.doc();
 
     const { ...d } = data;
+
+    const docRef = this.docRef.doc(data.id);
 
     d.createdAt = date;
     d.updatedAt = date;
