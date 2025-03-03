@@ -4,7 +4,7 @@ import { Exclude } from 'class-transformer';
 export class Account {
   @IsString()
   @IsNotEmpty()
-  user: string;
+  id: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -12,12 +12,8 @@ export class Account {
 
   @IsString()
   @IsNotEmpty()
-  @Exclude() // Hide password from responses
+  @Exclude()
   password: string;
-
-  @IsString()
-  @Exclude() // Hide token from responses
-  token: string;
 
   @IsDate()
   @IsNotEmpty()
