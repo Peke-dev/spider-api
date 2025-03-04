@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 
@@ -11,6 +10,8 @@ import { ResponseInterceptor } from '@common/interceptors';
 import { LeaguesModule } from '@modules/leagues';
 import { AccountsModule } from '@modules/accounts';
 import { AuthModule } from '@modules/auth';
+
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -48,5 +49,6 @@ import { AuthModule } from '@modules/auth';
       useClass: ResponseInterceptor,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
