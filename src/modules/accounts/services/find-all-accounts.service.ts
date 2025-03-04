@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+
 import { RepositoryInterface } from '@modules/database';
+
 import { Account } from '../entities/account.entity';
 import { ACCOUNTS_COLLECTION } from '../constants';
 

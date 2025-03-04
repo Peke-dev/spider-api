@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '@modules/database';
-import * as services from './services';
 import * as controllers from './controllers';
 import { ACCOUNTS_COLLECTION } from './constants';
 import * as Services from './services';
@@ -13,7 +12,7 @@ import * as Services from './services';
       },
     ]),
   ],
-  providers: [...Object.values(services)],
+  providers: [...Object.values(Services)],
   exports: [...Object.values(Services)],
   controllers: [...Object.values(controllers)],
 })
