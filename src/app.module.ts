@@ -35,7 +35,12 @@ import { AuthModule } from '@modules/auth';
     MatchesModule,
     LeaguesModule,
     AccountsModule,
-    AuthModule,
+    AuthModule.registerAsync({
+      useFactory: (config: GlobalConfigType) => ({
+        secret: config.JWT_SECRET,
+      }),
+      inject: [configuration.KEY],
+    }),
   ],
   providers: [
     {
