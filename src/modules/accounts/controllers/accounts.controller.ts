@@ -5,7 +5,11 @@ import {
   Body,
   Param,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
+
+import { JwtAuthGuard } from '@modules/auth/guards';
+
 import {
   FindAllAccountsService,
   FindAccountByIdService,
@@ -14,6 +18,7 @@ import {
 import { Account } from '../entities';
 import { CreateAccountDto } from '../dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('accounts')
 export class AccountsController {
   constructor(
