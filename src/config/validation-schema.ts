@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 export const validationSchema = Joi.object({
   // Application
   NODE_ENV: Joi.string().valid('dev', 'production', 'test'),
-  PORT: Joi.number().default(6666),
+  PORT: Joi.number().default(8080),
 
   //Firestore
   FIRESTORE_PROJECT_ID: Joi.string().required(),

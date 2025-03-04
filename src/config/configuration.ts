@@ -11,7 +11,7 @@ export const configuration = registerAs('GLOBAL_CONFIG', () => {
   return {
     //App
     NODE_ENV: process.env.NODE_ENV || 'dev',
-    PORT: parseInt(process.env.PORT || '3000'),
+    PORT: parseInt(process.env.PORT || '8080', 10),
 
     //Firestore
     FIRESTORE_PROJECT_ID: process.env.FIRESTORE_PROJECT_ID,

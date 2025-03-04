@@ -1,20 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-
 import { Logger } from 'nestjs-pino';
 
+import { configuration, GlobalConfigType } from './config';
 import { AppModule } from './app.module';
 
 let logger: Logger;
 
 async function bootstrap() {
-  const port = process.env.PORT ?? 3000;
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   logger = await app.resolve<Logger>(Logger);
 
-  await app.listen(port);
+  const config = await app.resolve<GlobalConfigType>(configuration.KEY);
 
-  logger.log(`🚀 Server is listening on port ${port}`);
+  await app.listen(config.PORT);
+
+  logger.log(`🚀 Server is listening on port ${config.PORT}`);
 }
 
 bootstrap().catch((error): void => {
