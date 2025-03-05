@@ -8,4 +8,8 @@ export class CreateAccountDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  constructor(partial: Partial<CreateAccountDto>) {
+    Object.assign(this, partial);
+  }
 }

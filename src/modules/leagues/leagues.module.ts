@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
-
 import { DatabaseModule } from '@modules/database';
-
-import * as services from './services';
-import * as controllers from './controllers';
-
 import { LEAGUES_COLLECTION } from './constants';
+import * as UseCases from './application/use-cases';
+import { LeaguesController } from './infrastructure/controllers/leagues.controller';
 
 @Module({
   imports: [
@@ -15,8 +12,8 @@ import { LEAGUES_COLLECTION } from './constants';
       },
     ]),
   ],
-  providers: [...Object.values(services)],
-  exports: [...Object.values(services)],
-  controllers: [...Object.values(controllers)],
+  providers: [...Object.values(UseCases)],
+  exports: [...Object.values(UseCases)],
+  controllers: [LeaguesController],
 })
 export class LeaguesModule {}

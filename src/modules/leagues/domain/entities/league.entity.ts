@@ -1,9 +1,9 @@
 import {
-  IsDate,
   IsNotEmpty,
+  IsString,
+  IsDate,
   IsNumber,
   IsOptional,
-  IsString,
   IsBoolean,
   ValidateNested,
   IsArray,
@@ -21,6 +21,10 @@ class Country {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  constructor(partial: Partial<Country>) {
+    Object.assign(this, partial);
+  }
 }
 
 class Season {
@@ -35,12 +39,16 @@ class Season {
 
   @IsString()
   end: string;
+
+  constructor(partial: Partial<Season>) {
+    Object.assign(this, partial);
+  }
 }
 
 export class League {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  id: number;
+  id: string;
 
   @ValidateNested()
   country: Country;
@@ -72,4 +80,8 @@ export class League {
   @IsDate()
   @IsNotEmpty()
   updatedAt: Date;
+
+  constructor(partial: Partial<League>) {
+    Object.assign(this, partial);
+  }
 }
