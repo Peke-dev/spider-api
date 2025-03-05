@@ -22,4 +22,8 @@ export class Account {
   @IsDate()
   @IsNotEmpty()
   updatedAt: Date;
+
+  constructor(partial: Partial<Account>) {
+    Object.assign(this, partial);
+  }
 }

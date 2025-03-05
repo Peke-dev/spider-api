@@ -1,18 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-
 import { RepositoryInterface } from '@modules/database';
 
-import { Account } from '../entities/account.entity';
-import { ACCOUNTS_COLLECTION } from '../constants';
+import { ACCOUNTS_COLLECTION } from '../../constants';
+import { Account } from '../../domain/entities/account.entity';
 
 @Injectable()
-export class FindAllAccountsService {
+export class FindAllAccountsUseCase {
   constructor(
     @Inject(ACCOUNTS_COLLECTION)
     private readonly accountsRepository: RepositoryInterface<Account>,
   ) {}
 
-  run(): Promise<Account[]> {
+  async execute(): Promise<Account[]> {
     return this.accountsRepository.findAll();
   }
 }
