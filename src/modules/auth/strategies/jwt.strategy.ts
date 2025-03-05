@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { FindAccountByIdService } from '@modules/accounts/services';
+import { FindAccountByIdUseCase } from '@modules/accounts/';
 
 import { JwtPayload } from '../interfaces';
 import { AUTH_MODULE_OPTIONS } from '../constants';
@@ -11,7 +11,7 @@ import { AuthModuleOptions } from '../interfaces';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly findAccountByIdService: FindAccountByIdService,
+    private readonly findAccountByIdService: FindAccountByIdUseCase,
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly config: AuthModuleOptions,
   ) {
@@ -20,16 +20,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       ignoreExpiration: false,
       secretOrKey: config.secret,
     });
-
-    console.log('config.secret', config.secret);
   }
 
   async validate(payload: JwtPayload) {
-    console.log('eso!');
-    const account = await this.findAccountByIdService.run(payload.sub);
-
-    console.log('account', account);
-
-    return account;
+    return await this.findAccountByIdService.execute(payload.sub);
   }
 }
