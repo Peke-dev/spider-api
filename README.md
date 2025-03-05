@@ -2,98 +2,226 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<h1 align="center">Spider Football API 🕷️⚽</h1>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
+<p align="center">
+  A powerful REST API for retrieving football (soccer) data including leagues, matches, and teams. Built with NestJS and Firebase.
+</p>
+
+<p align="center">
+  <strong>🌐 API URL: </strong><a href="https://api.spider.football">api.spider.football</a>
+</p>
+
+<p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## API Base URL 🌐
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+All API requests should be made to:
+```http
+https://api.spider.football
 ```
 
-## Compile and run the project
+Example request:
+```http
+GET https://api.spider.football/leagues
+```
+
+## Features 🌟
+
+- **Authentication System**
+  - Secure user registration and login
+  - JWT-based authentication
+  - Protected routes with Passport
+
+- **Leagues**
+  - Get all leagues
+  - Get league details
+  - Get league standings
+  - Search leagues by country
+
+- **Matches**
+  - Get live matches
+  - Get match details
+  - Get match statistics
+  - Filter matches by date
+  - Search matches by team
+
+- **Teams**
+  - Get team information
+  - Get team squad
+  - Get team statistics
+  - Search teams by name
+
+## Tech Stack 💻
+
+- **Framework**: NestJS
+- **Database**: Firebase/Firestore
+- **Authentication**: JWT + Passport
+- **Documentation**: Swagger/OpenAPI
+- **Testing**: Jest
+- **CI/CD**: GitHub Actions
+
+## Prerequisites 📋
+
+- Node.js (v16 or higher)
+- npm or yarn
+- Firebase account
+
+## Installation 🔧
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/spider-football-api.git
+cd spider-football-api
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Configure environment variables
+```bash
+cp .env.example .env
+```
+
+Fill in the following environment variables:
+```env
+JWT_SECRET=your_jwt_secret
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_PRIVATE_KEY=your_private_key
+FIREBASE_CLIENT_EMAIL=your_client_email
+```
+
+## Running the app 🚀
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
 ```
 
-## Run tests
+## API Documentation 📚
+
+### Authentication Endpoints
+
+```http
+POST /auth/register
+POST /auth/login
+```
+
+### Leagues Endpoints
+
+```http
+GET /leagues
+GET /leagues/:id
+GET /leagues/:id/standings
+GET /leagues/search?country=:country
+```
+
+### Matches Endpoints
+
+```http
+GET /matches
+GET /matches/live
+GET /matches/:id
+GET /matches/:id/statistics
+GET /matches/search?team=:teamName
+```
+
+### Teams Endpoints
+
+```http
+GET /teams
+GET /teams/:id
+GET /teams/:id/squad
+GET /teams/search?name=:teamName
+```
+
+## Authentication 🔐
+
+The API uses JWT for authentication. To access protected endpoints:
+
+1. Register or login to get a JWT token
+2. Include the token in the Authorization header:
+```http
+Authorization: Bearer your_jwt_token
+```
+
+## Error Handling ⚠️
+
+The API uses standard HTTP status codes:
+
+- `200`: Success
+- `201`: Created
+- `400`: Bad Request
+- `401`: Unauthorized
+- `403`: Forbidden
+- `404`: Not Found
+- `500`: Internal Server Error
+
+Error responses follow this format:
+```json
+{
+  "statusCode": 400,
+  "message": "Error description",
+  "error": "Bad Request"
+}
+```
+
+## Rate Limiting 🚦
+
+The API implements rate limiting to prevent abuse:
+- 100 requests per minute for authenticated users
+- 20 requests per minute for unauthenticated users
+
+## Testing ✅
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
-## Deployment
+## Database Schema 📊
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Key collections in Firestore:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- `accounts`: User accounts and authentication data
+- `leagues`: League information and standings
+- `matches`: Match data and statistics
+- `teams`: Team information and squad details
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+## Contributing 🤝
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Resources
+## Support 💪
 
-Check out a few resources that may come in handy when working with NestJS:
+If you find any bugs or have feature requests, please create an issue in the GitHub repository.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Stay in touch 📫
 
-## Support
+- Website - [api.spider.football](https://api.spider.football)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## License 📝
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is [MIT licensed](LICENSE).
