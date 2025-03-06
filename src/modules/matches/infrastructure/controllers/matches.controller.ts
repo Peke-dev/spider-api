@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateMatchDto } from '../dto';
 import { Match } from '../../domain/entities';
@@ -7,7 +7,9 @@ import {
   FindMatchByIdUseCase,
   FindAllMatchesUseCase,
 } from '../../application';
+import { JwtAuthGuard } from '@modules/auth';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('matches')
 @Controller('matches')
 export class MatchesController {

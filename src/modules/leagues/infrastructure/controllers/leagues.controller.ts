@@ -6,6 +6,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateLeagueUseCase,
@@ -14,7 +15,9 @@ import {
 } from '../../application';
 import { CreateLeagueDto } from '../dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@modules/auth';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Leagues')
 @Controller('leagues')
 export class LeaguesController {
