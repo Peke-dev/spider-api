@@ -5,11 +5,11 @@
 <h1 align="center">Spider Football API 🕷️⚽</h1>
 
 <p align="center">
-  A powerful REST API for retrieving football (soccer) data including leagues, matches, and teams. Built with NestJS and Firebase.
+  A powerful REST API for retrieving football (soccer) data including leagues and matches. Built with NestJS and Firebase.
 </p>
 
 <p align="center">
-  <strong>🌐 API URL: </strong><a href="https://api.spider.football">api.spider.football</a>
+  <strong>🌐 Production API: </strong><a href="https://api.spider.football">api.spider.football</a>
 </p>
 
 <p align="center">
@@ -36,12 +36,14 @@ GET https://api.spider.football/leagues
   - Secure user registration and login
   - JWT-based authentication
   - Protected routes with Passport
+  - Rate limiting and security features
 
 - **Leagues**
   - Get all leagues
   - Get league details
   - Get league standings
   - Search leagues by country
+  - Real-time standings updates
 
 - **Matches**
   - Get live matches
@@ -49,12 +51,7 @@ GET https://api.spider.football/leagues
   - Get match statistics
   - Filter matches by date
   - Search matches by team
-
-- **Teams**
-  - Get team information
-  - Get team squad
-  - Get team statistics
-  - Search teams by name
+  - Real-time match updates
 
 ## Tech Stack 💻
 
@@ -64,12 +61,43 @@ GET https://api.spider.football/leagues
 - **Documentation**: Swagger/OpenAPI
 - **Testing**: Jest
 - **CI/CD**: GitHub Actions
+- **Monitoring**: Firebase Analytics
+- **Caching**: Redis
 
 ## Prerequisites 📋
 
 - Node.js (v16 or higher)
 - npm or yarn
 - Firebase account
+- Redis (optional, for caching)
+
+## Environment Variables 🔑
+
+Create a `.env` file in the root directory:
+
+```env
+# Application
+PORT=3000
+NODE_ENV=development
+
+# Authentication
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION=24h
+
+# Firebase
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_PRIVATE_KEY=your_private_key
+FIREBASE_CLIENT_EMAIL=your_client_email
+
+# Redis (optional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# Rate Limiting
+RATE_LIMIT_TTL=60
+RATE_LIMIT_MAX=100
+```
 
 ## Installation 🔧
 
@@ -87,14 +115,6 @@ npm install
 3. Configure environment variables
 ```bash
 cp .env.example .env
-```
-
-Fill in the following environment variables:
-```env
-JWT_SECRET=your_jwt_secret
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_PRIVATE_KEY=your_private_key
-FIREBASE_CLIENT_EMAIL=your_client_email
 ```
 
 ## Running the app 🚀
@@ -119,6 +139,27 @@ POST /auth/register
 POST /auth/login
 ```
 
+Example register request:
+```json
+{
+  "email": "user@example.com",
+  "password": "securePassword123",
+  "name": "John Doe"
+}
+```
+
+Example successful response:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "user123",
+    "email": "user@example.com",
+    "name": "John Doe"
+  }
+}
+```
+
 ### Leagues Endpoints
 
 ```http
@@ -126,6 +167,28 @@ GET /leagues
 GET /leagues/:id
 GET /leagues/:id/standings
 GET /leagues/search?country=:country
+```
+
+Example response for `/leagues/:id/standings`:
+```json
+{
+  "league": {
+    "id": "league123",
+    "name": "Premier League",
+    "country": "England"
+  },
+  "standings": [
+    {
+      "position": 1,
+      "team": "Manchester City",
+      "played": 38,
+      "points": 89,
+      "won": 28,
+      "drawn": 5,
+      "lost": 5
+    }
+  ]
+}
 ```
 
 ### Matches Endpoints
@@ -138,24 +201,55 @@ GET /matches/:id/statistics
 GET /matches/search?team=:teamName
 ```
 
-### Teams Endpoints
-
-```http
-GET /teams
-GET /teams/:id
-GET /teams/:id/squad
-GET /teams/search?name=:teamName
+Example response for `/matches/live`:
+```json
+{
+  "matches": [
+    {
+      "id": "match123",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Real Madrid",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "status": "LIVE",
+      "minute": 75
+    }
+  ]
+}
 ```
 
-## Authentication 🔐
+## Authentication Flow 🔐
 
-The API uses JWT for authentication. To access protected endpoints:
+1. Register a new account:
+   ```http
+   POST /auth/register
+   Content-Type: application/json
 
-1. Register or login to get a JWT token
-2. Include the token in the Authorization header:
-```http
-Authorization: Bearer your_jwt_token
-```
+   {
+     "email": "user@example.com",
+     "password": "securePassword123",
+     "name": "John Doe"
+   }
+   ```
+
+2. Login to get JWT token:
+   ```http
+   POST /auth/login
+   Content-Type: application/json
+
+   {
+     "email": "user@example.com",
+     "password": "securePassword123"
+   }
+   ```
+
+3. Use the token in subsequent requests:
+   ```http
+   GET /matches
+   Authorization: Bearer your_jwt_token
+   ```
 
 ## Error Handling ⚠️
 
@@ -167,6 +261,7 @@ The API uses standard HTTP status codes:
 - `401`: Unauthorized
 - `403`: Forbidden
 - `404`: Not Found
+- `429`: Too Many Requests
 - `500`: Internal Server Error
 
 Error responses follow this format:
@@ -174,7 +269,9 @@ Error responses follow this format:
 {
   "statusCode": 400,
   "message": "Error description",
-  "error": "Bad Request"
+  "error": "Bad Request",
+  "timestamp": "2024-03-06T12:00:00Z",
+  "path": "/api/endpoint"
 }
 ```
 
@@ -183,6 +280,13 @@ Error responses follow this format:
 The API implements rate limiting to prevent abuse:
 - 100 requests per minute for authenticated users
 - 20 requests per minute for unauthenticated users
+
+Rate limit headers in response:
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 99
+X-RateLimit-Reset: 1583497200
+```
 
 ## Testing ✅
 
@@ -202,9 +306,40 @@ npm run test:cov
 Key collections in Firestore:
 
 - `accounts`: User accounts and authentication data
+  ```typescript
+  interface Account {
+    id: string;
+    email: string;
+    password: string; // hashed
+    name: string;
+    createdAt: Timestamp;
+  }
+  ```
+
 - `leagues`: League information and standings
+  ```typescript
+  interface League {
+    id: string;
+    name: string;
+    country: string;
+    season: string;
+    standings: Standing[];
+  }
+  ```
+
 - `matches`: Match data and statistics
-- `teams`: Team information and squad details
+  ```typescript
+  interface Match {
+    id: string;
+    leagueId: string;
+    homeTeam: string;
+    awayTeam: string;
+    score: Score;
+    status: MatchStatus;
+    startTime: Timestamp;
+    statistics: Statistics;
+  }
+  ```
 
 ## Contributing 🤝
 
@@ -221,6 +356,8 @@ If you find any bugs or have feature requests, please create an issue in the Git
 ## Stay in touch 📫
 
 - Website - [api.spider.football](https://api.spider.football)
+- Documentation - [docs.spider.football](https://docs.spider.football)
+- Status - [status.spider.football](https://status.spider.football)
 
 ## License 📝
 
