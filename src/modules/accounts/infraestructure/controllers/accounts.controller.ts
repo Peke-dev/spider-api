@@ -10,7 +10,8 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '@modules/auth/guards';
+import { JwtAuthGuard } from '@modules/auth';
+
 import { Account } from '../../domain/entities';
 import { CreateAccountDto } from '../../infraestructure/dto';
 import {

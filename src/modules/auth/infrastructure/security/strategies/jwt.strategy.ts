@@ -2,16 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { FindAccountByIdUseCase } from '@modules/accounts/';
-
-import { JwtPayload } from '../interfaces';
-import { AUTH_MODULE_OPTIONS } from '../constants';
-import { AuthModuleOptions } from '../interfaces';
+import { JwtPayload, AuthModuleOptions } from '../../interfaces';
+import { AUTH_MODULE_OPTIONS } from '../../../constants';
+import { AccountRepository } from '../../persistence/account.repository';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly findAccountByIdService: FindAccountByIdUseCase,
+    private readonly accountRepository: AccountRepository,
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly config: AuthModuleOptions,
   ) {
@@ -23,6 +21,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload) {
-    return await this.findAccountByIdService.execute(payload.sub);
+    return await this.accountRepository.findByEmail(payload.email);
   }
 }

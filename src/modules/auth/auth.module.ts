@@ -2,16 +2,17 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { DatabaseModule } from '@modules/database';
-import { ACCOUNTS_COLLECTION } from '@modules/accounts';
+import { DatabaseModule, RepositoryInterface } from '@modules/database';
+import { Account, ACCOUNTS_COLLECTION } from '@modules/accounts';
 
-import { AuthController } from './controllers/auth.controller';
-import * as Services from './services';
+import { AuthController } from './infrastructure/controllers/auth.controller';
+import { LoginUseCase } from './application/use-cases/login.use-case';
+import { AccountRepository } from './infrastructure/persistence/account.repository';
 import { AccountsModule } from '../accounts/accounts.module';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { AuthModuleOptionsAsync } from './interfaces';
+import { JwtStrategy } from './infrastructure/security/strategies/jwt.strategy';
+import { AuthModuleOptionsAsync } from './infrastructure/interfaces';
 import { AUTH_MODULE_OPTIONS } from './constants';
-import { JwtAuthGuard } from './guards';
+import { JwtAuthGuard } from './infrastructure/security/guards';
 
 @Module({})
 export class AuthModule {
@@ -23,7 +24,6 @@ export class AuthModule {
       imports: [
         PassportModule,
         AccountsModule,
-        PassportModule,
         JwtModule.registerAsync({
           imports: [AuthModule],
           useFactory: async (...args) => {
@@ -41,7 +41,14 @@ export class AuthModule {
       providers: [
         JwtAuthGuard,
         JwtStrategy,
-        ...Object.values(Services),
+        LoginUseCase,
+        {
+          provide: AccountRepository,
+          useFactory: (repository: RepositoryInterface<Account>) => {
+            return new AccountRepository(repository);
+          },
+          inject: [ACCOUNTS_COLLECTION],
+        },
         {
           provide: AUTH_MODULE_OPTIONS,
           useFactory: async (...args) => {
