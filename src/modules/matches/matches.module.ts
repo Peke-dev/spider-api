@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-
-import { DatabaseModule } from '@modules/database';
-
-import { FindAllMatchesService } from './services/find-all-matches.service';
-import { FindMatchByIdService } from './services/find-match-by-id.service';
-import { MatchesController } from './controllers/matches.controller';
+import { MatchesController } from './infrastructure';
+import {
+  CreateMatchUseCase,
+  FindMatchByIdUseCase,
+  FindAllMatchesUseCase,
+} from './application/use-cases';
 import { MATCHES_COLLECTION } from './constants';
+import { DatabaseModule } from '@modules/database';
 
 @Module({
   imports: [
@@ -15,8 +16,7 @@ import { MATCHES_COLLECTION } from './constants';
       },
     ]),
   ],
-  providers: [FindAllMatchesService, FindMatchByIdService],
-  exports: [FindAllMatchesService, FindMatchByIdService],
+  providers: [CreateMatchUseCase, FindMatchByIdUseCase, FindAllMatchesUseCase],
   controllers: [MatchesController],
 })
 export class MatchesModule {}
