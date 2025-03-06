@@ -1,22 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { FindAccountByUseCase } from '@modules/accounts';
+
+import { Account, ACCOUNTS_COLLECTION } from '@modules/accounts';
 
 import { LoginDto } from '../dto';
+import { RepositoryInterface } from '@modules/database';
 
 @Injectable()
 export class LoginService {
   constructor(
-    private readonly findAccountByUseCase: FindAccountByUseCase,
+    @Inject(ACCOUNTS_COLLECTION)
+    private readonly repository: RepositoryInterface<Account>,
     private readonly jwtService: JwtService,
   ) {}
 
   async run(loginDto: LoginDto) {
-    const account = await this.findAccountByUseCase.execute(
-      'email',
-      loginDto.email,
-    );
+    const account = await this.repository.findOneBy('email', loginDto.email);
 
     if (!account) {
       throw new UnauthorizedException('Invalid credentials');

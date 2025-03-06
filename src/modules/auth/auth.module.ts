@@ -2,6 +2,9 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
+import { DatabaseModule } from '@modules/database';
+import { ACCOUNTS_COLLECTION } from '@modules/accounts';
+
 import { AuthController } from './controllers/auth.controller';
 import * as Services from './services';
 import { AccountsModule } from '../accounts/accounts.module';
@@ -29,6 +32,11 @@ export class AuthModule {
           },
           inject,
         }),
+        DatabaseModule.forFeature([
+          {
+            collection: ACCOUNTS_COLLECTION,
+          },
+        ]),
       ],
       providers: [
         JwtAuthGuard,
