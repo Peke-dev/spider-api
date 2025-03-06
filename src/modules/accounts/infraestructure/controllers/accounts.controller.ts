@@ -12,14 +12,13 @@ import {
 
 import { JwtAuthGuard } from '@modules/auth/guards';
 import { Account } from '../../domain/entities';
-import { CreateAccountDto } from '../../infraestructure/';
+import { CreateAccountDto } from '../../infraestructure/dto';
 import {
   CreateAccountUseCase,
   FindAccountByIdUseCase,
   FindAllAccountsUseCase,
 } from '../../application/use-cases';
 
-@UseGuards(JwtAuthGuard)
 @Controller('accounts')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AccountsController {
@@ -29,11 +28,13 @@ export class AccountsController {
     private readonly findAllAccountsUseCase: FindAllAccountsUseCase,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(): Promise<Account[]> {
     return this.findAllAccountsUseCase.execute();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Account> {
     const account = await this.findAccountByIdUseCase.execute(id);
