@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RepositoryInterface } from '@modules/database';
 
 import { ACCOUNTS_COLLECTION } from '../../constants';
@@ -11,13 +11,7 @@ export class FindAccountByIdUseCase {
     private readonly accountsRepository: RepositoryInterface<Account>,
   ) {}
 
-  async execute(id: string): Promise<Account> {
-    const account = await this.accountsRepository.findOneById(id);
-
-    if (!account) {
-      throw new NotFoundException(`Account with id ${id} not found`);
-    }
-
-    return account;
+  async execute(id: string): Promise<Account | null> {
+    return this.accountsRepository.findOneById(id);
   }
 }

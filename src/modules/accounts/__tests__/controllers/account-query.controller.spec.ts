@@ -1,29 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { AccountsController } from '../../infraestructure';
+import { AccountQueryController } from '../../infraestructure/controllers/account-query.controller';
 import {
-  CreateAccountUseCase,
   FindAccountByIdUseCase,
   FindAllAccountsUseCase,
 } from '../../application/use-cases';
 import { Account } from '../../domain/entities/account.entity';
 
-describe('AccountsController', () => {
-  let controller: AccountsController;
-  let createAccountUseCase: CreateAccountUseCase;
+describe('AccountQueryController', () => {
+  let controller: AccountQueryController;
   let findAccountByIdUseCase: FindAccountByIdUseCase;
   let findAllAccountsUseCase: FindAllAccountsUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AccountsController],
+      controllers: [AccountQueryController],
       providers: [
-        {
-          provide: CreateAccountUseCase,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
         {
           provide: FindAccountByIdUseCase,
           useValue: {
@@ -39,9 +31,7 @@ describe('AccountsController', () => {
       ],
     }).compile();
 
-    controller = module.get<AccountsController>(AccountsController);
-    createAccountUseCase =
-      module.get<CreateAccountUseCase>(CreateAccountUseCase);
+    controller = module.get<AccountQueryController>(AccountQueryController);
     findAccountByIdUseCase = module.get<FindAccountByIdUseCase>(
       FindAccountByIdUseCase,
     );
@@ -52,26 +42,6 @@ describe('AccountsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  describe('create', () => {
-    it('should create an account successfully', async () => {
-      const createAccountDto = {
-        email: 'test@example.com',
-        password: 'password123',
-      };
-
-      jest
-        .spyOn(createAccountUseCase, 'execute')
-        .mockResolvedValue('new-account-id');
-
-      const result = await controller.create(createAccountDto);
-
-      expect(result).toEqual({ id: 'new-account-id' });
-      expect(createAccountUseCase.execute).toHaveBeenCalledWith(
-        createAccountDto,
-      );
-    });
   });
 
   describe('findAll', () => {
@@ -118,9 +88,7 @@ describe('AccountsController', () => {
     });
 
     it('should throw NotFoundException when account is not found', async () => {
-      jest
-        .spyOn(findAccountByIdUseCase, 'execute')
-        .mockRejectedValue(new NotFoundException());
+      jest.spyOn(findAccountByIdUseCase, 'execute').mockResolvedValue(null);
 
       await expect(controller.findOne('non-existent-id')).rejects.toThrow(
         NotFoundException,

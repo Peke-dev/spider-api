@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { RepositoryInterface } from '@modules/database';
@@ -15,6 +15,17 @@ export class CreateAccountUseCase {
   ) {}
 
   async execute(createAccountDto: CreateAccountDto): Promise<string> {
+    const existingAccount = await this.accountsRepository.findOneBy(
+      'email',
+      createAccountDto.email,
+    );
+
+    if (existingAccount) {
+      throw new ConflictException(
+        `Account with email ${createAccountDto.email} already exists`,
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(createAccountDto.password, 10);
 
     const account = new Account({

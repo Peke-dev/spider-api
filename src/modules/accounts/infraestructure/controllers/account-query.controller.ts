@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
   Param,
   NotFoundException,
   UseGuards,
@@ -11,20 +9,16 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '@modules/auth/infrastructure';
-
 import { Account } from '../../domain/entities';
-import { CreateAccountDto } from '../../infraestructure/dto';
 import {
-  CreateAccountUseCase,
   FindAccountByIdUseCase,
   FindAllAccountsUseCase,
 } from '../../application/use-cases';
 
 @Controller('accounts')
 @UseInterceptors(ClassSerializerInterceptor)
-export class AccountsController {
+export class AccountQueryController {
   constructor(
-    private readonly createAccountUseCase: CreateAccountUseCase,
     private readonly findAccountByIdUseCase: FindAccountByIdUseCase,
     private readonly findAllAccountsUseCase: FindAllAccountsUseCase,
   ) {}
@@ -45,13 +39,5 @@ export class AccountsController {
     }
 
     return account;
-  }
-
-  @Post()
-  async create(
-    @Body() createAccountDto: CreateAccountDto,
-  ): Promise<{ id: string }> {
-    const id = await this.createAccountUseCase.execute(createAccountDto);
-    return { id };
   }
 }

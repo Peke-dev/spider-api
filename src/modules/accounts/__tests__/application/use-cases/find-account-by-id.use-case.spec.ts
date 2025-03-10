@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 import { RepositoryInterface } from '@modules/database';
 import { FindAccountByIdUseCase } from '../../../application/use-cases';
 import { Account } from '../../../domain/entities/account.entity';
@@ -47,11 +46,12 @@ describe('FindAccountByIdUseCase', () => {
     expect(repository.findOneById).toHaveBeenCalledWith('test-id');
   });
 
-  it('should throw NotFoundException when account is not found', async () => {
+  it('should return null when account is not found', async () => {
     jest.spyOn(repository, 'findOneById').mockResolvedValue(null);
 
-    await expect(useCase.execute('non-existent-id')).rejects.toThrow(
-      NotFoundException,
-    );
+    const result = await useCase.execute('non-existent-id');
+
+    expect(result).toBeNull();
+    expect(repository.findOneById).toHaveBeenCalledWith('non-existent-id');
   });
 });
