@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Match } from '../../domain/entities';
 import { MATCHES_COLLECTION } from '../../constants';
 import { RepositoryInterface } from '@modules/database';
+
 @Injectable()
 export class FindAllMatchesUseCase {
   constructor(
@@ -10,6 +11,8 @@ export class FindAllMatchesUseCase {
   ) {}
 
   async execute(): Promise<Match[]> {
-    return this.repository.findAll();
+    return this.repository.findAll({
+      orderBy: 'date',
+    });
   }
 }

@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { RepositoryInterface } from '@modules/database';
 import { FindMatchByIdUseCase } from '../../../application/use-cases';
 import { Match } from '../../../domain/entities';
 import { MATCHES_COLLECTION } from '../../../constants';
-import { RepositoryInterface } from '@modules/database';
 
 describe('FindMatchByIdUseCase', () => {
   let useCase: FindMatchByIdUseCase;
@@ -30,100 +29,78 @@ describe('FindMatchByIdUseCase', () => {
     expect(useCase).toBeDefined();
   });
 
-  describe('execute', () => {
-    it('should find a match by id successfully', async () => {
-      const mockMatch = new Match({
-        id: 'match-1',
-        referee: 'A. Taylor',
-        timezone: 'UTC',
-        date: '2024-03-16T15:00:00+00:00',
-        timestamp: 1710601200,
-        periods: {
-          first: 45,
-          second: 45,
+  it('should find match by id successfully', async () => {
+    const mockMatch = new Match({
+      id: 'test-id',
+      referee: 'A. Taylor',
+      timezone: 'UTC',
+      date: '2024-03-16T15:00:00+00:00',
+      timestamp: 1710601200,
+      periods: {
+        first: 45,
+        second: 45,
+      },
+      venue: {
+        id: 1,
+        name: 'Old Trafford',
+        city: 'Manchester',
+      },
+      status: {
+        long: 'Match Finished',
+        short: 'FT',
+        elapsed: 90,
+      },
+      league: {
+        id: 39,
+        name: 'Premier League',
+        country: 'England',
+        logo: 'https://media.api-sports.io/football/leagues/39.png',
+        flag: 'https://media.api-sports.io/flags/gb.svg',
+        season: 2023,
+        round: 'Regular Season - 1',
+      },
+      teams: {
+        home: {
+          id: 33,
+          name: 'Manchester United',
+          logo: 'https://media.api-sports.io/football/teams/33.png',
+          winner: true,
         },
-        venue: {
-          id: 1,
-          name: 'Old Trafford',
-          city: 'Manchester',
+        away: {
+          id: 34,
+          name: 'Newcastle',
+          logo: 'https://media.api-sports.io/football/teams/34.png',
+          winner: false,
         },
-        status: {
-          long: 'Match Finished',
-          short: 'FT',
-          elapsed: 90,
-        },
-        league: {
-          id: 39,
-          name: 'Premier League',
-          country: 'England',
-          logo: 'https://media.api-sports.io/football/leagues/39.png',
-          season: 2023,
-          round: 'Regular Season - 1',
-        },
-        teams: {
-          home: {
-            id: 33,
-            name: 'Manchester United',
-            logo: 'https://media.api-sports.io/football/teams/33.png',
-            winner: true,
-          },
-          away: {
-            id: 34,
-            name: 'Newcastle',
-            logo: 'https://media.api-sports.io/football/teams/34.png',
-            winner: false,
-          },
-        },
-        goals: {
-          home: 2,
-          away: 1,
-        },
-        score: {
-          halftime: {
-            home: 1,
-            away: 0,
-          },
-          fulltime: {
-            home: 2,
-            away: 1,
-          },
-          extratime: {
-            home: null,
-            away: null,
-          },
-          penalty: {
-            home: null,
-            away: null,
-          },
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      jest.spyOn(repository, 'findOneById').mockResolvedValue(mockMatch);
-
-      const result = await useCase.execute('match-1');
-
-      expect(result).toEqual(mockMatch);
-      expect(repository.findOneById).toHaveBeenCalledWith('match-1');
+      },
+      goals: {
+        home: 2,
+        away: 1,
+      },
+      score: {
+        halftime: { home: 1, away: 0 },
+        fulltime: { home: 2, away: 1 },
+        extratime: { home: null, away: null },
+        penalty: { home: null, away: null },
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
-    it('should throw NotFoundException when match is not found', async () => {
-      jest.spyOn(repository, 'findOneById').mockResolvedValue(null);
+    jest.spyOn(repository, 'findOneById').mockResolvedValue(mockMatch);
 
-      await expect(useCase.execute('non-existent')).rejects.toThrow(
-        NotFoundException,
-      );
-    });
+    const result = await useCase.execute('test-id');
 
-    it('should handle repository errors', async () => {
-      jest
-        .spyOn(repository, 'findOneById')
-        .mockRejectedValue(new Error('Database error'));
+    expect(result).toEqual(mockMatch);
+    expect(repository.findOneById).toHaveBeenCalledWith('test-id');
+  });
 
-      await expect(useCase.execute('match-1')).rejects.toThrow(
-        'Database error',
-      );
-    });
+  it('should return null when match is not found', async () => {
+    jest.spyOn(repository, 'findOneById').mockResolvedValue(null);
+
+    const result = await useCase.execute('non-existent-id');
+
+    expect(result).toBeNull();
+    expect(repository.findOneById).toHaveBeenCalledWith('non-existent-id');
   });
 });

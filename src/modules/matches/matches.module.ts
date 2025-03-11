@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MatchesController } from './infrastructure';
+import * as controllers from './infrastructure/controllers';
 import {
   CreateMatchUseCase,
   FindMatchByIdUseCase,
@@ -17,6 +17,6 @@ import { DatabaseModule } from '@modules/database';
     ]),
   ],
   providers: [CreateMatchUseCase, FindMatchByIdUseCase, FindAllMatchesUseCase],
-  controllers: [MatchesController],
+  controllers: [...Object.values(controllers)],
 })
 export class MatchesModule {}
