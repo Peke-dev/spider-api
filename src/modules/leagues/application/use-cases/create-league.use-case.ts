@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 
 import { RepositoryInterface } from '@modules/database';
-import { League } from '../../domain/entities';
+import { League } from '../../domain/entities/league.entity';
 import { LEAGUES_COLLECTION } from '../../constants';
-import { CreateLeagueDto } from '../../infrastructure/dto';
+import { CreateLeagueDto } from '../dto';
 
 @Injectable()
 export class CreateLeagueUseCase {

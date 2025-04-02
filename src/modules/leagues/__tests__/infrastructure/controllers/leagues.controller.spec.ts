@@ -7,7 +7,7 @@ import {
   FindAllLeaguesUseCase,
 } from '../../../application/use-cases';
 import { LeagueTypeEnum } from '../../../domain';
-import { CreateLeagueDto } from '../../../infrastructure/dto';
+import { CreateLeagueDto } from '../../../application/dto';
 import { createMockLeague } from '../../../__tests__/__mocks__/league.mock';
 
 describe('LeaguesController', () => {

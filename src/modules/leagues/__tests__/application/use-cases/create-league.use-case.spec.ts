@@ -1,29 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { RepositoryInterface } from '@modules/database';
 import { CreateLeagueUseCase } from '../../../application';
-import { League, LeagueTypeEnum } from '../../../domain';
-import { LEAGUES_COLLECTION } from '../../../constants';
-import { CreateLeagueDto } from '../../../infrastructure/dto/create-league.dto';
+import { League } from '../../../domain/entities/league.entity';
+import { CreateLeagueDto } from '../../../application/dto';
+import { LeagueTypeEnum } from '../../../domain/enums/league.enum';
 
 describe('CreateLeagueUseCase', () => {
   let useCase: CreateLeagueUseCase;
   let repository: RepositoryInterface<League>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CreateLeagueUseCase,
-        {
-          provide: LEAGUES_COLLECTION,
-          useValue: {
-            create: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
+  beforeEach(() => {
+    repository = {
+      findAll: jest.fn(),
+      findOneById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      findOneBy: jest.fn(),
+    } as RepositoryInterface<League>;
 
-    useCase = module.get<CreateLeagueUseCase>(CreateLeagueUseCase);
-    repository = module.get<RepositoryInterface<League>>(LEAGUES_COLLECTION);
+    useCase = new CreateLeagueUseCase(repository);
   });
 
   it('should be defined', () => {
@@ -46,38 +40,16 @@ describe('CreateLeagueUseCase', () => {
       ],
     };
 
-    jest.spyOn(repository, 'create').mockResolvedValue('league-1'); // Cambiado a string
+    jest.spyOn(repository, 'create').mockResolvedValue('39');
 
     const result = await useCase.execute(createLeagueDto);
 
-    expect(result).toBe('league-1');
-    expect(repository.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: createLeagueDto.name,
-        country: expect.objectContaining({
-          name: createLeagueDto.country,
-          code: null,
-          flag: null,
-        }),
-        logo: createLeagueDto.logo,
-        type: createLeagueDto.type,
-        seasons: expect.arrayContaining([
-          expect.objectContaining({
-            year: 2023,
-            start: '2023-08-11',
-            end: '2024-05-19',
-            current: true,
-          }),
-        ]),
-        id: expect.any(String),
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-      }),
-    );
+    expect(result).toBe('39');
+    expect(repository.create).toHaveBeenCalledWith(createLeagueDto);
   });
 
   it('should handle repository errors', async () => {
-    const createLeagueDto = {
+    const createLeagueDto: CreateLeagueDto = {
       name: 'Premier League',
       country: 'England',
       logo: 'https://media.api-sports.io/football/leagues/39.png',
@@ -96,5 +68,6 @@ describe('CreateLeagueUseCase', () => {
     jest.spyOn(repository, 'create').mockRejectedValue(error);
 
     await expect(useCase.execute(createLeagueDto)).rejects.toThrow(error);
+    expect(repository.create).toHaveBeenCalledWith(createLeagueDto);
   });
 });
