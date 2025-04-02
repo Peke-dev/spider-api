@@ -6,8 +6,9 @@ import {
   FindLeagueByIdUseCase,
   FindAllLeaguesUseCase,
 } from '../../../application/use-cases';
-import { League } from '../../../domain/entities';
+import { LeagueTypeEnum } from '../../../domain';
 import { CreateLeagueDto } from '../../../infrastructure/dto';
+import { createMockLeague } from '../../../__tests__/__mocks__/league.mock';
 
 describe('LeaguesController', () => {
   let controller: LeaguesController;
@@ -60,8 +61,7 @@ describe('LeaguesController', () => {
         name: 'Premier League',
         country: 'England',
         logo: 'https://media.api-sports.io/football/leagues/39.png',
-        type: 'League',
-        round: 'Regular Season',
+        type: LeagueTypeEnum.LEAGUE,
         seasons: [
           {
             year: 2023,
@@ -83,30 +83,7 @@ describe('LeaguesController', () => {
 
   describe('findAll', () => {
     it('should return all leagues', async () => {
-      const mockLeagues = [
-        new League({
-          id: '39',
-          name: 'Premier League',
-          country: {
-            name: 'England',
-            code: 'GB',
-            flag: 'https://media.api-sports.io/flags/gb.svg',
-          },
-          logo: 'https://media.api-sports.io/football/leagues/39.png',
-          type: 'League',
-          round: 'Regular Season',
-          seasons: [
-            {
-              year: 2023,
-              start: '2023-08-11',
-              end: '2024-05-19',
-              current: true,
-            },
-          ],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      ];
+      const mockLeagues = [createMockLeague()];
 
       jest
         .spyOn(findAllLeaguesUseCase, 'execute')
@@ -121,28 +98,7 @@ describe('LeaguesController', () => {
 
   describe('findOne', () => {
     it('should return a league by id', async () => {
-      const mockLeague = new League({
-        id: '39',
-        name: 'Premier League',
-        country: {
-          name: 'England',
-          code: 'GB',
-          flag: 'https://media.api-sports.io/flags/gb.svg',
-        },
-        logo: 'https://media.api-sports.io/football/leagues/39.png',
-        type: 'League',
-        round: 'Regular Season',
-        seasons: [
-          {
-            year: 2023,
-            start: '2023-08-11',
-            end: '2024-05-19',
-            current: true,
-          },
-        ],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      const mockLeague = createMockLeague({ id: '39' });
 
       jest
         .spyOn(findLeagueByIdUseCase, 'execute')

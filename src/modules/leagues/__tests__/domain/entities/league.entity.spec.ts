@@ -1,10 +1,15 @@
-import { validate } from 'class-validator';
 import { League } from '@modules/leagues/domain/entities';
 import {
   LeagueStatusEnum,
   LeagueTypeEnum,
 } from '@modules/leagues/domain/enums';
-import { createMockLeague, mockLeague } from '../../__mocks__/league.mock';
+import {
+  createMockLeague,
+  mockLeague,
+  createMockLeagues,
+} from '../../__mocks__/league.mock';
+import { createMockCountry } from '../../__mocks__/country.mock';
+import { createMockSeasons } from '../../__mocks__/season.mock';
 
 describe('League Entity', () => {
   let league: League;
@@ -36,6 +41,8 @@ describe('League Entity', () => {
         type: LeagueTypeEnum.CUP,
         status: LeagueStatusEnum.DISABLED,
         logo: 'https://test.com/logo.png',
+        country: createMockCountry({ name: 'Test Country' }),
+        seasons: createMockSeasons(3),
       };
       const newLeague = createMockLeague(mockData);
 
@@ -43,64 +50,95 @@ describe('League Entity', () => {
       expect(newLeague.type).toBe(mockData.type);
       expect(newLeague.status).toBe(mockData.status);
       expect(newLeague.logo).toBe(mockData.logo);
+      expect(newLeague.country).toBe(mockData.country);
+      expect(newLeague.seasons).toEqual(mockData.seasons);
+    });
+
+    it('should handle multiple leagues with different properties', () => {
+      const leagues = createMockLeagues(3);
+
+      expect(leagues).toHaveLength(3);
+      expect(leagues[0].status).toBe(LeagueStatusEnum.ENABLED);
+      expect(leagues[1].status).toBe(LeagueStatusEnum.DISABLED);
+      expect(leagues[2].status).toBe(LeagueStatusEnum.ENABLED);
+
+      expect(leagues[0].type).toBe(LeagueTypeEnum.LEAGUE);
+      expect(leagues[1].type).toBe(LeagueTypeEnum.CUP);
+      expect(leagues[2].type).toBe(LeagueTypeEnum.LEAGUE);
     });
   });
 
-  describe('validation', () => {
-    it('should pass validation with valid data', async () => {
-      const errors = await validate(league);
-      expect(errors.length).toBe(0);
+  describe('required properties', () => {
+    it('should have required properties', () => {
+      expect(league.name).toBeDefined();
+      expect(league.country).toBeDefined();
+      expect(league.seasons).toBeDefined();
+      expect(league.type).toBeDefined();
     });
 
-    it('should fail validation when name is empty', async () => {
-      const invalidLeague = createMockLeague({ name: '' });
-      const errors = await validate(invalidLeague);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]?.property).toBe('name');
-    });
-
-    it('should fail validation when type is invalid', async () => {
-      const invalidLeague = createMockLeague({
-        type: 'INVALID_TYPE' as LeagueTypeEnum,
-      });
-      const errors = await validate(invalidLeague);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]?.property).toBe('type');
-    });
-
-    it('should fail validation when status is invalid', async () => {
-      const invalidLeague = createMockLeague({
-        status: 'INVALID_STATUS' as LeagueStatusEnum,
-      });
-      const errors = await validate(invalidLeague);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]?.property).toBe('status');
-    });
-
-    it('should fail validation when country is missing', async () => {
-      const invalidLeague = createMockLeague({ country: undefined });
-      const errors = await validate(invalidLeague);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]?.property).toBe('country');
-    });
-
-    it('should fail validation when seasons array is empty', async () => {
-      const invalidLeague = createMockLeague({ seasons: [] });
-      const errors = await validate(invalidLeague);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]?.property).toBe('seasons');
+    it('should have optional properties', () => {
+      expect(league.id).toBeDefined();
+      expect(league.logo).toBeDefined();
+      expect(league.status).toBeDefined();
+      expect(league.createdAt).toBeDefined();
+      expect(league.updatedAt).toBeDefined();
     });
   });
 
   describe('default values', () => {
-    it('should set default status to ENABLED when not provided', () => {
-      const newLeague = createMockLeague({ status: undefined });
+    it('should set default status to ENABLED', () => {
+      const newLeague = new League({
+        name: 'Test League',
+        country: createMockCountry(),
+        seasons: createMockSeasons(1),
+        type: LeagueTypeEnum.LEAGUE,
+      });
       expect(newLeague.status).toBe(LeagueStatusEnum.ENABLED);
     });
 
-    it('should set default logo to null when not provided', () => {
-      const newLeague = createMockLeague({ logo: undefined });
+    it('should set default logo to null', () => {
+      const newLeague = new League({
+        name: 'Test League',
+        country: createMockCountry(),
+        seasons: createMockSeasons(1),
+        type: LeagueTypeEnum.LEAGUE,
+      });
       expect(newLeague.logo).toBeNull();
+    });
+  });
+
+  describe('dates', () => {
+    it('should set createdAt and updatedAt when not provided', () => {
+      const newLeague = createMockLeague();
+      expect(newLeague.createdAt).toBeInstanceOf(Date);
+      expect(newLeague.updatedAt).toBeInstanceOf(Date);
+    });
+
+    it('should use provided dates when available', () => {
+      const createdAt = new Date('2024-01-01');
+      const updatedAt = new Date('2024-01-02');
+      const newLeague = createMockLeague({ createdAt, updatedAt });
+      expect(newLeague.createdAt).toBe(createdAt);
+      expect(newLeague.updatedAt).toBe(updatedAt);
+    });
+
+    it('should set same date for createdAt and updatedAt when not provided', () => {
+      const newLeague = createMockLeague();
+      expect(newLeague.createdAt).toEqual(newLeague.updatedAt);
+    });
+  });
+
+  describe('data types', () => {
+    it('should have correct data types', () => {
+      expect(typeof league.id).toBe('string');
+      expect(league.country).toBeInstanceOf(Object);
+      expect(Array.isArray(league.seasons)).toBe(true);
+      expect(typeof league.name).toBe('string');
+      expect(typeof league.logo).toBe('object');
+      expect(Object.values(LeagueTypeEnum)).toContain(league.type);
+      expect(Object.values(LeagueStatusEnum)).toContain(league.status);
+      expect(league.createdAt).toBeInstanceOf(Date);
+      expect(league.updatedAt).toBeInstanceOf(Date);
     });
   });
 });

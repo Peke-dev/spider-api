@@ -19,15 +19,19 @@ export interface LeagueMockData {
 }
 
 export const createMockLeague = (data: LeagueMockData = {}): League => {
+  const defaultData = {
+    name: 'Premier League',
+    country: mockCountry,
+    seasons: [mockSeason],
+    type: LeagueTypeEnum.LEAGUE,
+    logo: null,
+    status: LeagueStatusEnum.ENABLED,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
   return new League({
-    name: data.name ?? 'Premier League',
-    country: data.country ?? mockCountry,
-    seasons: data.seasons ?? [mockSeason],
-    type: data.type ?? LeagueTypeEnum.LEAGUE,
-    logo: data.logo ?? 'https://example.com/logo.png',
-    status: data.status ?? LeagueStatusEnum.ENABLED,
-    createdAt: data.createdAt ?? new Date(),
-    updatedAt: data.updatedAt ?? new Date(),
+    ...defaultData,
     ...data,
   });
 };

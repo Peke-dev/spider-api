@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { RepositoryInterface } from '@modules/database';
 import { FindLeagueByIdUseCase } from '../../../application/use-cases';
-import { League } from '../../../domain/entities/league.entity';
+import { League, LeagueTypeEnum } from '../../../domain';
 import { LEAGUES_COLLECTION } from '../../../constants';
 
 describe('FindLeagueByIdUseCase', () => {
@@ -40,8 +40,7 @@ describe('FindLeagueByIdUseCase', () => {
         flag: 'https://media.api-sports.io/flags/gb.svg',
       },
       logo: 'https://media.api-sports.io/football/leagues/39.png',
-      type: 'League',
-      round: 'Regular Season',
+      type: LeagueTypeEnum.LEAGUE,
       seasons: [
         {
           year: 2023,

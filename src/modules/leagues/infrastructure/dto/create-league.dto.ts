@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { LeagueTypeEnum } from '@modules/leagues/domain/enums';
 
 class SeasonDto {
   @IsNumber({}, { message: 'Year must be a number' })
@@ -51,13 +52,12 @@ export class CreateLeagueDto {
 
   @IsString({ message: 'Type must be a string' })
   @IsNotEmpty({ message: 'Type is required' })
-  @ApiProperty({ example: 'League' })
-  type: string;
-
-  @IsString({ message: 'Round must be a string' })
-  @IsNotEmpty({ message: 'Round is required' })
-  @ApiProperty({ example: 'Regular Season' })
-  round: string;
+  @ApiProperty({
+    enumName: 'LeagueType',
+    enum: LeagueTypeEnum,
+    example: LeagueTypeEnum.LEAGUE,
+  })
+  type: LeagueTypeEnum;
 
   @IsArray({ message: 'Seasons must be an array' })
   @ValidateNested({ each: true })

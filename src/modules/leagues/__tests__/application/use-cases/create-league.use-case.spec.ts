@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RepositoryInterface } from '@modules/database';
 import { CreateLeagueUseCase } from '../../../application';
-import { League } from '../../../domain/';
+import { League, LeagueTypeEnum } from '../../../domain';
 import { LEAGUES_COLLECTION } from '../../../constants';
+import { CreateLeagueDto } from '../../../infrastructure/dto/create-league.dto';
 
 describe('CreateLeagueUseCase', () => {
   let useCase: CreateLeagueUseCase;
@@ -30,12 +31,11 @@ describe('CreateLeagueUseCase', () => {
   });
 
   it('should create a league successfully', async () => {
-    const createLeagueDto = {
+    const createLeagueDto: CreateLeagueDto = {
       name: 'Premier League',
       country: 'England',
       logo: 'https://media.api-sports.io/football/leagues/39.png',
-      type: 'League',
-      round: 'Regular Season',
+      type: LeagueTypeEnum.LEAGUE,
       seasons: [
         {
           year: 2023,
@@ -61,7 +61,6 @@ describe('CreateLeagueUseCase', () => {
         }),
         logo: createLeagueDto.logo,
         type: createLeagueDto.type,
-        round: createLeagueDto.round,
         seasons: expect.arrayContaining([
           expect.objectContaining({
             year: 2023,
@@ -82,8 +81,7 @@ describe('CreateLeagueUseCase', () => {
       name: 'Premier League',
       country: 'England',
       logo: 'https://media.api-sports.io/football/leagues/39.png',
-      type: 'League',
-      round: 'Regular Season',
+      type: LeagueTypeEnum.LEAGUE,
       seasons: [
         {
           year: 2023,

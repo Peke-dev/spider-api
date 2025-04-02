@@ -1,28 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { RepositoryInterface } from '@modules/database';
 import { FindAllLeaguesUseCase } from '../../../application';
 import { League } from '../../../domain/entities/league.entity';
-import { LEAGUES_COLLECTION } from '../../../constants';
+import { createMockLeagues } from '../../../__tests__/__mocks__/league.mock';
 
 describe('FindAllLeaguesUseCase', () => {
   let useCase: FindAllLeaguesUseCase;
   let repository: RepositoryInterface<League>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        FindAllLeaguesUseCase,
-        {
-          provide: LEAGUES_COLLECTION,
-          useValue: {
-            findAll: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
+  beforeEach(() => {
+    repository = {
+      findAll: jest.fn(),
+      findOneById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      findOneBy: jest.fn(),
+    } as RepositoryInterface<League>;
 
-    useCase = module.get<FindAllLeaguesUseCase>(FindAllLeaguesUseCase);
-    repository = module.get<RepositoryInterface<League>>(LEAGUES_COLLECTION);
+    useCase = new FindAllLeaguesUseCase(repository);
   });
 
   it('should be defined', () => {
@@ -30,31 +24,7 @@ describe('FindAllLeaguesUseCase', () => {
   });
 
   it('should return all leagues', async () => {
-    const mockLeagues = [
-      new League({
-        id: '39',
-        name: 'Premier League',
-        country: {
-          name: 'England',
-          code: 'GB',
-          flag: 'https://media.api-sports.io/flags/gb.svg',
-        },
-        logo: 'https://media.api-sports.io/football/leagues/39.png',
-        type: 'League',
-        round: 'Regular Season',
-        seasons: [
-          {
-            year: 2023,
-            start: '2023-08-11',
-            end: '2024-05-19',
-            current: true,
-          },
-        ],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-    ];
-
+    const mockLeagues = createMockLeagues(3);
     jest.spyOn(repository, 'findAll').mockResolvedValue(mockLeagues);
 
     const result = await useCase.execute();
