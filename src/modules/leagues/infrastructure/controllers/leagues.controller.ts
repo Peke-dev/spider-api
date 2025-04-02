@@ -5,7 +5,7 @@ import {
   FindAllLeaguesUseCase,
   FindLeagueByIdUseCase,
 } from '../../application';
-import { CreateLeagueDto } from '../dto';
+import { CreateLeagueDto } from '../../application/dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth';
 
