@@ -1,54 +1,15 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsDate,
-  IsNumber,
-  IsOptional,
-  IsBoolean,
-  ValidateNested,
-  IsArray,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsDate, IsOptional } from 'class-validator';
+import { IsEnum, ValidateNested, IsArray } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 
-class Country {
-  @IsString()
-  @IsOptional()
-  code: string | null;
-
-  @IsString()
-  @IsOptional()
-  flag: string | null;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  constructor(partial: Partial<Country>) {
-    Object.assign(this, partial);
-  }
-}
-
-class Season {
-  @IsBoolean()
-  current: boolean;
-
-  @IsNumber()
-  year: number;
-
-  @IsString()
-  start: string;
-
-  @IsString()
-  end: string;
-
-  constructor(partial: Partial<Season>) {
-    Object.assign(this, partial);
-  }
-}
+import { Country } from './country.entity';
+import { Season } from './season.entity';
+import { LeagueStatusEnum, LeagueTypeEnum } from '../enums/league.enum';
 
 export class League {
   @IsString()
-  @IsNotEmpty()
-  id: string;
+  @IsOptional()
+  id?: string;
 
   @ValidateNested()
   country: Country;
@@ -62,16 +23,16 @@ export class League {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
-  logo: string;
+  @IsOptional()
+  logo: string | null = null;
 
-  @IsString()
+  @IsEnum(LeagueTypeEnum)
   @IsNotEmpty()
-  type: string;
+  type: LeagueTypeEnum;
 
-  @IsString()
-  @IsNotEmpty()
-  round: string;
+  @IsEnum(LeagueStatusEnum)
+  @IsOptional()
+  status: LeagueStatusEnum = LeagueStatusEnum.ENABLED;
 
   @IsDate()
   @IsNotEmpty()
@@ -82,6 +43,10 @@ export class League {
   updatedAt: Date;
 
   constructor(partial: Partial<League>) {
-    Object.assign(this, partial);
+    let { id } = partial;
+
+    id = id ?? uuidv4();
+
+    Object.assign(this, { id, ...partial });
   }
 }
