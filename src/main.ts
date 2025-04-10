@@ -17,11 +17,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Elimina propiedades no decoradas del objeto
-      forbidNonWhitelisted: true, // Lanza error si hay propiedades no decoradas
-      transform: true, // Transforma automáticamente los tipos
+      whitelist: true,
+      transform: true,
       transformOptions: {
-        enableImplicitConversion: true, // Permite conversiones implícitas de tipos
+        enableImplicitConversion: true,
       },
     }),
   );
