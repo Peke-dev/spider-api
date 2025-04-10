@@ -9,9 +9,9 @@ export class League {
   country: Country;
   seasons: Season[];
   name: string;
-  logo: string | null = null;
+  logo?: string | null;
   type: LeagueTypeEnum;
-  status: LeagueStatusEnum = LeagueStatusEnum.ENABLED;
+  status: LeagueStatusEnum;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -22,9 +22,21 @@ export class League {
       createdAt: date,
       updatedAt: date,
       logo: null,
-      status: LeagueStatusEnum.ENABLED,
+      status: LeagueStatusEnum.DISABLED,
     };
 
     Object.assign(this, defaults, partial);
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      country: this.country.toJSON(),
+      seasons: this.seasons.map((season) => season.toJSON()),
+      name: this.name,
+      logo: this.logo,
+      type: this.type,
+      status: this.status,
+    };
   }
 }

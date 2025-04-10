@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 
 import { RepositoryInterface } from '@modules/database';
-import { League } from '../../domain/entities/league.entity';
+import { League, Season, Country } from '../../domain/entities';
 import { LEAGUES_COLLECTION } from '../../constants';
 import { CreateLeagueDto } from '../dto';
 
@@ -14,18 +14,27 @@ export class CreateLeagueUseCase {
   ) {}
 
   async execute(data: CreateLeagueDto): Promise<string> {
+    const country = new Country(data.country);
+
+    const seasons = data.seasons.map(
+      (season) =>
+        new Season({
+          current: season.current,
+          year: season.year,
+          start: season.start,
+          end: season.end,
+        }),
+    );
+
     const league = new League({
+      id: data.id,
       name: data.name,
-      country: {
-        name: data.country,
-        code: null,
-        flag: null,
-      },
       logo: data.logo,
       type: data.type,
-      seasons: data.seasons,
+      country,
+      seasons,
     });
 
-    return this.repository.create(league);
+    return this.repository.create(league.toJSON());
   }
 }
