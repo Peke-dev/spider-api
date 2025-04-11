@@ -2,20 +2,25 @@ import { Module } from '@nestjs/common';
 import * as UseCases from './application/use-cases';
 import { LeaguesController } from './infrastructure/controllers/leagues.controller';
 import { BaseRepository } from '@domain/repositories';
-import { Firestore } from 'firebase-admin/firestore';
-import { LeagueRepository } from './infrastructure/repositories/firestore.repository';
+import { LeagueMongooseRepository } from './infrastructure/repositories';
 import { LEAGUES_COLLECTION } from './constants';
-
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { LeagueSchema, LeagueDocument } from './infrastructure/schemas';
+import { Model } from 'mongoose';
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forFeature([
+      { name: LEAGUES_COLLECTION, schema: LeagueSchema },
+    ]),
+  ],
   providers: [
     ...Object.values(UseCases),
     {
       provide: BaseRepository,
-      useFactory: (firestore: Firestore) => {
-        return new LeagueRepository(firestore, LEAGUES_COLLECTION);
+      useFactory: (model: Model<LeagueDocument>) => {
+        return new LeagueMongooseRepository(model);
       },
-      inject: [Firestore],
+      inject: [getModelToken(LEAGUES_COLLECTION)],
     },
   ],
   exports: [...Object.values(UseCases)],
