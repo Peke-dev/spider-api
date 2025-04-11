@@ -7,6 +7,7 @@ import {
   IsBoolean,
   IsUUID,
   IsOptional,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -83,7 +84,7 @@ export class CreateLeagueDto {
   })
   logo: string;
 
-  @IsString({ message: 'Type must be a string' })
+  @IsEnum(LeagueTypeEnum, { message: 'Type must be a valid league type' })
   @IsNotEmpty({ message: 'Type is required' })
   @ApiProperty({
     enumName: 'LeagueType',
