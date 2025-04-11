@@ -37,6 +37,8 @@ export class League {
       logo: this.logo,
       type: this.type,
       status: this.status,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }

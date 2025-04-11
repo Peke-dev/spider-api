@@ -1,18 +1,23 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@modules/database';
-import { LEAGUES_COLLECTION } from './constants';
 import * as UseCases from './application/use-cases';
 import { LeaguesController } from './infrastructure/controllers/leagues.controller';
+import { BaseRepository } from '@domain/repositories';
+import { Firestore } from 'firebase-admin/firestore';
+import { LeagueRepository } from './infrastructure/repositories/firestore.repository';
+import { LEAGUES_COLLECTION } from './constants';
 
 @Module({
-  imports: [
-    DatabaseModule.forFeature([
-      {
-        collection: LEAGUES_COLLECTION,
+  imports: [],
+  providers: [
+    ...Object.values(UseCases),
+    {
+      provide: BaseRepository,
+      useFactory: (firestore: Firestore) => {
+        return new LeagueRepository(firestore, LEAGUES_COLLECTION);
       },
-    ]),
+      inject: [Firestore],
+    },
   ],
-  providers: [...Object.values(UseCases)],
   exports: [...Object.values(UseCases)],
   controllers: [LeaguesController],
 })

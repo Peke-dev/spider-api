@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common';
 
-import { RepositoryInterface } from '@modules/database';
+import { BaseRepository } from '@domain/repositories';
 import { League, Season, Country } from '../../domain/entities';
-import { LEAGUES_COLLECTION } from '../../constants';
 import { CreateLeagueDto } from '../dto';
 
 @Injectable()
 export class CreateLeagueUseCase {
-  constructor(
-    @Inject(LEAGUES_COLLECTION)
-    private readonly repository: RepositoryInterface<League>,
-  ) {}
+  constructor(private readonly repository: BaseRepository<League>) {}
 
   async execute(data: CreateLeagueDto): Promise<string> {
     const country = new Country(data.country);
@@ -35,6 +30,8 @@ export class CreateLeagueUseCase {
       seasons,
     });
 
-    return this.repository.create(league.toJSON());
+    const res = await this.repository.create(league.toJSON());
+
+    return res;
   }
 }
