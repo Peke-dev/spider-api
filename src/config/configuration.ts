@@ -18,7 +18,10 @@ export const configuration = registerAs('GLOBAL_CONFIG', () => {
     FIRESTORE_PRIVATE_KEY: fsPrivateKey,
     FIRESTORE_CLIENT_EMAIL: process.env.FIRESTORE_CLIENT_EMAIL,
 
-    //App
+    //Auth
     JWT_SECRET: process.env.JWT_SECRET || 'private_secret',
+
+    //Mongo
+    MONGO_URI: process.env.MONGO_URI,
   };
 });
