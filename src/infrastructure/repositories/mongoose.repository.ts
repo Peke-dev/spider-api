@@ -1,4 +1,4 @@
-import { Model, Document } from 'mongoose';
+import { Model, Document, QueryOptions } from 'mongoose';
 
 import { FindAllOptionsDto } from '../../application/dtos';
 import { BaseRepository } from '../../domain/repositories';
@@ -8,11 +8,14 @@ export class MongooseRepository<T extends Document, D>
 {
   constructor(private readonly model: Model<T>) {}
 
-  async findAll(options?: FindAllOptionsDto): Promise<D[]> {
+  async findAll(
+    query?: QueryOptions<T>,
+    options?: FindAllOptionsDto,
+  ): Promise<D[]> {
     const { orderBy = 'createdAt', order = 'desc' } = options || {};
 
     const documents = await this.model
-      .find()
+      .find(query || {})
       .sort({ [orderBy]: order === 'desc' ? -1 : 1 })
       .exec();
 
@@ -32,8 +35,7 @@ export class MongooseRepository<T extends Document, D>
     return document ? this.toDomain(document.toJSON()) : null;
   }
 
-  async create<CreateDTO>(data: CreateDTO & { id: string }): Promise<string> {
-    console.log('data', data);
+  async create(data): Promise<string> {
     const document = new this.model(data);
 
     const savedDocument = await document.save();
@@ -42,8 +44,8 @@ export class MongooseRepository<T extends Document, D>
 
   async update(id: string, data: Partial<T>): Promise<string> {
     await this.model
-      .findByIdAndUpdate(
-        id,
+      .findOneAndUpdate(
+        { id },
         {
           ...data,
           updatedAt: new Date(),
@@ -55,8 +57,7 @@ export class MongooseRepository<T extends Document, D>
     return id;
   }
 
-  toDomain(data: Document): D {
-    console.error('Not implemented');
-    return data as D;
+  toDomain(_data: Document): D {
+    throw new Error('Method toDomain not implemented');
   }
 }
