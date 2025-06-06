@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { LoggerModule } from 'nestjs-pino';
 
 import { FirestoreModule } from '@modules/firestore';
@@ -39,6 +40,12 @@ import { AppController } from './app.controller';
     AuthModule.registerAsync({
       useFactory: (config: GlobalConfigType) => ({
         secret: config.JWT_SECRET,
+      }),
+      inject: [configuration.KEY],
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: (config: GlobalConfigType) => ({
+        uri: config.MONGO_URI,
       }),
       inject: [configuration.KEY],
     }),
