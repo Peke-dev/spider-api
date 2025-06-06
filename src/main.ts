@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { configuration, GlobalConfigType } from './config';
 import { AppModule } from './app.module';
+import { CleanUndefinedPipe } from './infrastructure/pipes';
 
 let logger: Logger;
 
@@ -18,11 +19,15 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,
       },
+      skipUndefinedProperties: true,
+      skipNullProperties: true,
     }),
+    new CleanUndefinedPipe(),
   );
 
   const swaggerConfig = new DocumentBuilder()
