@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import {
   CreateLeagueUseCase,
   FindAllLeaguesUseCase,
   FindLeagueByIdUseCase,
+  UpdateLeagueUseCase,
 } from '../../application';
-import { CreateLeagueDto } from '../../application/dto';
+import { CreateLeagueDto, UpdateLeagueDto } from '../../application/dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth';
 
@@ -17,6 +18,7 @@ export class LeaguesController {
     private readonly createLeagueUseCase: CreateLeagueUseCase,
     private readonly findAllLeaguesUseCase: FindAllLeaguesUseCase,
     private readonly findLeagueByIdUseCase: FindLeagueByIdUseCase,
+    private readonly updateLeagueUseCase: UpdateLeagueUseCase,
   ) {}
 
   @Post()
@@ -43,7 +45,7 @@ export class LeaguesController {
     description: 'Return all leagues.',
   })
   async findAll() {
-    return this.findAllLeaguesUseCase.execute();
+    return this.findAllLeaguesUseCase.execute({ status: 'enabled' });
   }
 
   @Get(':id')
@@ -59,5 +61,28 @@ export class LeaguesController {
   })
   async findOne(@Param('id') id: string) {
     return this.findLeagueByIdUseCase.execute(id);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update a league' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The league has been successfully updated.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'League not found.',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() updateLeagueDto: UpdateLeagueDto,
+  ) {
+    await this.updateLeagueUseCase.execute(id, updateLeagueDto);
+    return { message: 'League updated successfully' };
   }
 }

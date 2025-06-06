@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { League } from '../../domain/entities';
-import { BaseRepository } from '@domain/repositories';
+import { LeagueRepository } from '../../domain/repositories';
 
 @Injectable()
 export class FindAllLeaguesUseCase {
-  constructor(private readonly repository: BaseRepository<League>) {}
+  constructor(private readonly repository: LeagueRepository) {}
 
-  execute(): Promise<League[]> {
-    return this.repository.findAll({});
+  execute(params?: { status: string }): Promise<League[]> {
+    return this.repository.findAll(params);
   }
 }

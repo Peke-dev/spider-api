@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseRepository } from '@domain/repositories';
+import { LeagueRepository } from '../../domain/repositories';
 import { League, Season, Country } from '../../domain/entities';
 import { CreateLeagueDto } from '../dto';
 
 @Injectable()
 export class CreateLeagueUseCase {
-  constructor(private readonly repository: BaseRepository<League>) {}
+  constructor(private readonly repository: LeagueRepository) {}
 
   async execute(data: CreateLeagueDto): Promise<string> {
     const country = new Country(data.country);
