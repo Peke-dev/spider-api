@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { LeagueRepository } from '../../domain/repositories';
-import { League, Season, Country } from '../../domain/entities';
 import { UpdateLeagueDto } from '../dto';
 
 @Injectable()

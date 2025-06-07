@@ -10,8 +10,6 @@ export class FindLeagueByIdUseCase {
   async execute(id: string): Promise<League> {
     const league = await this.repository.findOneById(id);
 
-    console.log('league', league);
-
     if (!league) {
       throw new NotFoundException('League not found');
     }
