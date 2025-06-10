@@ -1,16 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Match } from '../../domain';
-import { MATCHES_COLLECTION } from '../../constants';
-import { RepositoryInterface } from '@modules/database';
+import { Injectable } from '@nestjs/common';
+// import { Match } from '../../domain';
+import { CreateMatchDto } from '../dto';
+import { MatchRepository } from '../../domain';
 
 @Injectable()
 export class CreateMatchUseCase {
-  constructor(
-    @Inject(MATCHES_COLLECTION)
-    private readonly repository: RepositoryInterface<Match>,
-  ) {}
+  constructor(private readonly repository: MatchRepository) {}
 
-  async execute(match: Partial<Match>): Promise<string> {
-    return this.repository.create(match);
+  async execute(match: CreateMatchDto): Promise<string> {
+    const date = new Date();
+
+    console.log('match', match);
+    return this.repository.create({
+      ...match,
+      createdAt: date,
+      updatedAt: date,
+    });
   }
 }

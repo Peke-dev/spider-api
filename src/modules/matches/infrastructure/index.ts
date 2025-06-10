@@ -1,2 +1,2 @@
-export * from './dto';
+export * from '../application/dto';
 export * from './controllers';

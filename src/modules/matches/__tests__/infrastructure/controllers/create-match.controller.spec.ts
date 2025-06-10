@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateMatchController } from '../../../infrastructure/controllers/create-match.controller';
 import { CreateMatchUseCase } from '../../../application';
-import { CreateMatchDto } from '../../../infrastructure/dto';
+import { CreateMatchDto } from '../../../application/dto';
 
 describe('CreateMatchController', () => {
   let controller: CreateMatchController;

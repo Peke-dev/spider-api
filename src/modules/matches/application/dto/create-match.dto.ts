@@ -6,6 +6,8 @@ import {
   IsOptional,
   ValidateNested,
   IsBoolean,
+  IsDate,
+  IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -178,6 +180,11 @@ class GoalsDto {
 }
 
 export class CreateMatchDto {
+  @IsUUID()
+  @IsNotEmpty()
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id: string;
+
   @IsString()
   @IsOptional()
   @ApiProperty({ example: 'A. Taylor', required: false })

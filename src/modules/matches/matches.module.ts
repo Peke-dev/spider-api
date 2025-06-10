@@ -1,22 +1,30 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import * as controllers from './infrastructure/controllers';
-import {
-  CreateMatchUseCase,
-  FindMatchByIdUseCase,
-  FindAllMatchesUseCase,
-} from './application/use-cases';
+import * as UseCases from './application/use-cases';
 import { MATCHES_COLLECTION } from './constants';
-import { DatabaseModule } from '@modules/database';
+import { MatchRepository } from './domain/repositories';
+import { MatchDocument, MatchSchema } from './infrastructure/schemas';
+import { MatchMongooseRepository } from './infrastructure/repositories';
 
 @Module({
   imports: [
-    DatabaseModule.forFeature([
-      {
-        collection: MATCHES_COLLECTION,
-      },
+    MongooseModule.forFeature([
+      { name: MATCHES_COLLECTION, schema: MatchSchema },
     ]),
   ],
-  providers: [CreateMatchUseCase, FindMatchByIdUseCase, FindAllMatchesUseCase],
+  providers: [
+    ...Object.values(UseCases),
+    {
+      provide: MatchRepository,
+      useFactory: (model: Model<MatchDocument>) =>
+        new MatchMongooseRepository(model),
+      inject: [getModelToken(MATCHES_COLLECTION)],
+    },
+  ],
+  exports: [...Object.values(UseCases)],
   controllers: [...Object.values(controllers)],
 })
 export class MatchesModule {}

@@ -1,18 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Match } from '../../domain/entities';
-import { MATCHES_COLLECTION } from '../../constants';
-import { RepositoryInterface } from '@modules/database';
+import { Injectable } from '@nestjs/common';
+import { Match, MatchRepository } from '../../domain';
 
 @Injectable()
 export class FindAllMatchesUseCase {
-  constructor(
-    @Inject(MATCHES_COLLECTION)
-    private readonly repository: RepositoryInterface<Match>,
-  ) {}
+  constructor(private readonly repository: MatchRepository) {}
 
   async execute(): Promise<Match[]> {
-    return this.repository.findAll({
-      orderBy: 'date',
-    });
+    return this.repository.findAll(
+      {},
+      {
+        orderBy: 'date',
+      },
+    );
   }
 }
