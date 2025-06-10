@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
-import { HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { HttpCode, HttpStatus } from '@nestjs/common';
 import {
   CreateLeagueUseCase,
   FindAllLeaguesUseCase,
@@ -8,9 +8,7 @@ import {
 } from '../../application';
 import { CreateLeagueDto, UpdateLeagueDto } from '../../application/dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@modules/auth';
 
-@UseGuards(JwtAuthGuard)
 @ApiTags('Leagues')
 @Controller('leagues')
 export class LeaguesController {

@@ -1,1 +1,1 @@
-export * from './mongoose.repository';
+export * from './league-mongoose.repository';

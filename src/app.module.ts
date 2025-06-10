@@ -4,13 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LoggerModule } from 'nestjs-pino';
 
-import { FirestoreModule } from '@modules/firestore';
 import { configuration, GlobalConfigType, validationSchema } from '@config';
 import { MatchesModule } from '@modules/matches';
 import { ResponseInterceptor } from '@common/interceptors';
 import { LeaguesModule } from '@modules/leagues';
-import { AccountsModule } from '@modules/accounts';
-import { AuthModule } from '@modules/auth';
 
 import { AppController } from './app.controller';
 
@@ -23,26 +20,8 @@ import { AppController } from './app.controller';
       load: [configuration],
       validationSchema,
     }),
-    FirestoreModule.registerAsync({
-      global: true,
-      useFactory: (config: GlobalConfigType) => ({
-        serviceAccount: {
-          projectId: config.FIRESTORE_PROJECT_ID,
-          privateKey: config.FIRESTORE_PRIVATE_KEY,
-          clientEmail: config.FIRESTORE_CLIENT_EMAIL,
-        },
-      }),
-      inject: [configuration.KEY],
-    }),
     MatchesModule,
     LeaguesModule,
-    AccountsModule,
-    AuthModule.registerAsync({
-      useFactory: (config: GlobalConfigType) => ({
-        secret: config.JWT_SECRET,
-      }),
-      inject: [configuration.KEY],
-    }),
     MongooseModule.forRootAsync({
       useFactory: (config: GlobalConfigType) => ({
         uri: config.MONGO_URI,
