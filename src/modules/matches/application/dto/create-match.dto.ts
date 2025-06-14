@@ -6,7 +6,6 @@ import {
   IsOptional,
   ValidateNested,
   IsBoolean,
-  IsDate,
   IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -24,10 +23,10 @@ class PeriodDto {
 }
 
 class VenueDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({ example: 1 })
-  id: number;
+  @IsUUID()
+  @IsOptional()
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id?: string | null;
 
   @IsString()
   @IsNotEmpty()
@@ -58,10 +57,10 @@ class StatusDto {
 }
 
 class LeagueDto {
-  @IsNumber()
+  @IsUUID()
   @IsNotEmpty()
-  @ApiProperty({ example: 39 })
-  id: number;
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id: string;
 
   @IsString()
   @IsNotEmpty()
@@ -100,10 +99,10 @@ class LeagueDto {
 }
 
 class TeamDto {
-  @IsNumber()
+  @IsUUID()
   @IsNotEmpty()
-  @ApiProperty({ example: 33 })
-  id: number;
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id: string;
 
   @IsString()
   @IsNotEmpty()

@@ -34,9 +34,13 @@ export class Match {
     second: number;
   };
 
-  @Prop({ type: Object, required: true })
+  @Prop({
+    type: { id: String, name: String, city: String },
+    required: false,
+    default: null,
+  })
   venue: {
-    id: number;
+    id?: string | null;
     name: string;
     city: string;
   };
