@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MatchRepository } from '../../domain';
+import { MatchRepository, getMatchTypeByStatus } from '../../domain';
 import { UpdateMatchDto } from '../dto';
 
 @Injectable()
@@ -13,9 +13,19 @@ export class UpdateMatchUseCase {
       throw new NotFoundException(`Match with ID ${id} not found`);
     }
 
+    let status = match.status;
+
+    if (status && status.short) {
+      status = {
+        ...status,
+        type: getMatchTypeByStatus(status.short),
+      };
+    }
+
     const date = new Date();
     await this.repository.update(id, {
       ...match,
+      status,
       updatedAt: date,
     });
   }

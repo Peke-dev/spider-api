@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Match } from '../../domain/entities';
+import { Match } from '../../domain';
 import { FindAllMatchesUseCase } from '../../application';
+import { FindMatchesQueryDto } from '../../application/dto';
 
 @ApiTags('matches')
 @Controller('matches')
@@ -11,7 +12,7 @@ export class FindAllMatchesController {
   @Get()
   @ApiOperation({ summary: 'Get all matches' })
   @ApiResponse({ status: 200, description: 'Return all matches' })
-  async findAll(): Promise<Match[]> {
-    return this.findAllMatchesUseCase.execute();
+  async findAll(@Query() query: FindMatchesQueryDto): Promise<Match[]> {
+    return this.findAllMatchesUseCase.execute(query);
   }
 }

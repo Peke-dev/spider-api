@@ -1,11 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsOptional,
   IsNumber,
   ValidateNested,
+  IsUUID,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+
+import { MatchShortStatusEnum, MatchTypeEnum } from '../../domain';
 
 class PeriodDto {
   @IsNumber()
@@ -20,10 +24,13 @@ class PeriodDto {
 }
 
 class VenueDto {
-  @IsNumber()
+  @IsUUID()
   @IsOptional()
-  @ApiProperty({ example: 1, required: false })
-  id?: number;
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    required: false,
+  })
+  id?: string;
 
   @IsString()
   @IsOptional()
@@ -42,22 +49,27 @@ class StatusDto {
   @ApiProperty({ example: 'Match Finished', required: false })
   long?: string;
 
-  @IsString()
+  @IsEnum(MatchShortStatusEnum)
   @IsOptional()
-  @ApiProperty({ example: 'FT', required: false })
-  short?: string;
+  @ApiProperty({ example: MatchShortStatusEnum.FT, required: false })
+  short?: MatchShortStatusEnum;
 
   @IsNumber()
   @IsOptional()
   @ApiProperty({ example: 90, required: false })
   elapsed?: number;
+
+  @IsEnum(MatchTypeEnum)
+  @IsOptional()
+  @ApiProperty({ example: MatchTypeEnum.FINISHED, required: false })
+  type?: MatchTypeEnum;
 }
 
 class LeagueDto {
-  @IsNumber()
+  @IsUUID()
   @IsOptional()
-  @ApiProperty({ example: 39, required: false })
-  id?: number;
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id?: string;
 
   @IsString()
   @IsOptional()
@@ -97,10 +109,13 @@ class LeagueDto {
 }
 
 class TeamDto {
-  @IsNumber()
+  @IsUUID()
   @IsOptional()
-  @ApiProperty({ example: 33, required: false })
-  id?: number;
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    required: false,
+  })
+  id?: string;
 
   @IsString()
   @IsOptional()

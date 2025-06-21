@@ -1,5 +1,31 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { MatchTypeEnum, MatchShortStatusEnum } from '../../domain';
+
+export class VenueSchema {
+  @Prop({ type: String, default: null })
+  id: string | null;
+
+  @Prop({ type: String, required: true })
+  name: string;
+
+  @Prop({ type: String, required: true })
+  city: string;
+}
+
+export class StatusSchema {
+  @Prop({ type: String, required: true })
+  long: string;
+
+  @Prop({ type: MatchShortStatusEnum, required: true })
+  short: MatchShortStatusEnum;
+
+  @Prop({ type: Number, required: true })
+  elapsed: number;
+
+  @Prop({ type: MatchTypeEnum, required: true })
+  type: MatchTypeEnum;
+}
 
 @Schema({
   timestamps: true,
@@ -35,22 +61,14 @@ export class Match {
   };
 
   @Prop({
-    type: { id: String, name: String, city: String },
+    type: VenueSchema,
     required: false,
     default: null,
   })
-  venue: {
-    id?: string | null;
-    name: string;
-    city: string;
-  };
+  venue: VenueSchema;
 
-  @Prop({ type: Object, required: true })
-  status: {
-    long: string;
-    short: string;
-    elapsed: number;
-  };
+  @Prop({ type: StatusSchema, required: true })
+  status: StatusSchema;
 
   @Prop({ type: Object, required: true })
   league: {

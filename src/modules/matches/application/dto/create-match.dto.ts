@@ -7,8 +7,11 @@ import {
   ValidateNested,
   IsBoolean,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+
+import { MatchShortStatusEnum } from '../../domain';
 
 class PeriodDto {
   @IsNumber()
@@ -45,10 +48,10 @@ class StatusDto {
   @ApiProperty({ example: 'Match Finished' })
   long: string;
 
-  @IsString()
+  @IsEnum(MatchShortStatusEnum)
   @IsNotEmpty()
-  @ApiProperty({ example: 'FT' })
-  short: string;
+  @ApiProperty({ example: MatchShortStatusEnum.FT })
+  short: MatchShortStatusEnum;
 
   @IsNumber()
   @IsNotEmpty()

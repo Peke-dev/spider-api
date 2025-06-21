@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateMatchDto } from '../dto';
-import { MatchRepository } from '../../domain';
+import { MatchRepository, getMatchTypeByStatus } from '../../domain';
 
 @Injectable()
 export class CreateMatchUseCase {
@@ -17,6 +17,10 @@ export class CreateMatchUseCase {
 
     return this.repository.create({
       ...match,
+      status: {
+        ...match.status,
+        type: getMatchTypeByStatus(match.status.short),
+      },
       createdAt: date,
       updatedAt: date,
     });

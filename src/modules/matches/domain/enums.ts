@@ -1,0 +1,31 @@
+export enum MatchShortStatusEnum {
+  TBD = 'TBD',
+  NS = 'NS',
+  ONE_H = '1H',
+  HT = 'HT',
+  TWO_H = '2H',
+  ET = 'ET',
+  BT = 'BT',
+  P = 'P',
+  SUSP = 'SUSP',
+  INT = 'INT',
+  FT = 'FT',
+  AET = 'AET',
+  PEN = 'PEN',
+  PST = 'PST',
+  CANC = 'CANC',
+  ABD = 'ABD',
+  AWD = 'AWD',
+  WO = 'WO',
+  LIVE = 'LIVE',
+}
+
+export enum MatchTypeEnum {
+  SCHEDULED = 'SCHEDULED',
+  IN_PLAY = 'IN_PLAY',
+  FINISHED = 'FINISHED',
+  POSTPONED = 'POSTPONED',
+  CANCELLED = 'CANCELLED',
+  ABANDONED = 'ABANDONED',
+  NOT_PLAYED = 'NOT_PLAYED',
+}

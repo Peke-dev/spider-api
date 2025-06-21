@@ -1,12 +1,6 @@
-import {
-  Controller,
-  Post,
-  Body,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Controller, Post, Body, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateMatchDto, UpdateMatchDto } from '../../application/dto';
+import { CreateMatchDto } from '../../application/dto';
 import { CreateMatchUseCase, UpdateMatchUseCase } from '../../application';
 import { LeagueRepository } from '@modules/leagues/domain/repositories';
 
@@ -20,9 +14,8 @@ export class CreateMatchController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create or update a match' })
+  @ApiOperation({ summary: 'Create a match' })
   @ApiResponse({ status: 201, description: 'Match created successfully' })
-  @ApiResponse({ status: 200, description: 'Match updated successfully' })
   @ApiResponse({ status: 404, description: 'League not found' })
   async create(@Body() createMatchDto: CreateMatchDto) {
     const league = await this.leagueRepository.findOneById(
@@ -35,16 +28,7 @@ export class CreateMatchController {
       );
     }
 
-    try {
-      const id = await this.createMatchUseCase.execute(createMatchDto);
-      return { id, message: 'Match created successfully' };
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        const updateDto = createMatchDto as unknown as UpdateMatchDto;
-        await this.updateMatchUseCase.execute(createMatchDto.id, updateDto);
-        return { id: createMatchDto.id, message: 'Match updated successfully' };
-      }
-      throw error;
-    }
+    const id = await this.createMatchUseCase.execute(createMatchDto);
+    return { id, message: 'Match created successfully' };
   }
 }
