@@ -7,9 +7,13 @@ export class FindAllMatchesUseCase {
   constructor(private readonly repository: MatchRepository) {}
 
   async execute(queryParams: FindMatchesQueryDto = {}): Promise<Match[]> {
-    const { statusType, status } = queryParams;
+    const { statusType, status, league } = queryParams;
 
     const query = {};
+
+    if (league) {
+      query['league.id'] = league;
+    }
 
     if (statusType) {
       query['status.type'] = statusType;
