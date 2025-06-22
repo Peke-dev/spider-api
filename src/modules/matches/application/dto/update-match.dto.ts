@@ -6,6 +6,7 @@ import {
   ValidateNested,
   IsUUID,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -63,6 +64,11 @@ class StatusDto {
   @IsOptional()
   @ApiProperty({ example: MatchTypeEnum.FINISHED, required: false })
   type?: MatchTypeEnum;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({ example: 0, required: false })
+  extra?: number | null;
 }
 
 class LeagueDto {
@@ -106,6 +112,11 @@ class LeagueDto {
   @IsOptional()
   @ApiProperty({ example: 'Regular Season - 1', required: false })
   round?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ example: true, required: false })
+  standings?: boolean;
 }
 
 class TeamDto {

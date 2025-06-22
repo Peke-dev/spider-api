@@ -57,6 +57,11 @@ class StatusDto {
   @IsNotEmpty()
   @ApiProperty({ example: 90 })
   elapsed: number;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({ example: 0, required: false })
+  extra?: number | null;
 }
 
 class LeagueDto {
@@ -99,6 +104,11 @@ class LeagueDto {
   @IsNotEmpty()
   @ApiProperty({ example: 'Regular Season - 1' })
   round: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ example: true, required: false })
+  standings?: boolean | null;
 }
 
 class TeamDto {

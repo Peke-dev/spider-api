@@ -22,11 +22,10 @@ export class UpdateMatchUseCase {
       };
     }
 
-    const date = new Date();
     await this.repository.update(id, {
       ...match,
       status,
-      updatedAt: date,
+      updatedAt: new Date(),
     });
   }
 }

@@ -6,7 +6,6 @@ export class FindMatchByIdUseCase {
   constructor(private readonly repository: MatchRepository) {}
 
   async execute(id: string): Promise<Match | null> {
-    console.log('id', id);
     return this.repository.findOneById(id);
   }
 }
