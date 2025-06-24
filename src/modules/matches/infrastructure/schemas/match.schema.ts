@@ -79,6 +79,7 @@ export class Match {
     flag?: string | null;
     season: number;
     round: string;
+    standings?: boolean | null;
   };
 
   @Prop({ type: Object, required: true })

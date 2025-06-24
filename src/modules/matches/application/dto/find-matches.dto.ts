@@ -1,6 +1,20 @@
-import { MatchShortStatusEnum, MatchTypeEnum } from '@modules/matches/domain';
+import {
+  DateStringEnum,
+  MatchShortStatusEnum,
+  MatchTypeEnum,
+  TimezoneEnum,
+} from '@modules/matches/domain';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsUUID,
+  Matches,
+  ValidateIf,
+} from 'class-validator';
+import { IsLaterThan } from '@common/decorators';
+
+const YYYY_MM_DD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export class FindMatchesQueryDto {
   @IsEnum(MatchTypeEnum)
@@ -20,4 +34,30 @@ export class FindMatchesQueryDto {
     required: false,
   })
   league?: string;
+
+  @IsEnum(DateStringEnum)
+  @IsOptional()
+  @ApiProperty({ example: DateStringEnum.TODAY, required: false })
+  dateString?: DateStringEnum;
+
+  @Matches(YYYY_MM_DD_REGEX, {
+    message: 'from must be in YYYY-MM-DD format',
+  })
+  @IsOptional()
+  @ApiProperty({ example: '2025-01-01', required: false })
+  from?: string;
+
+  @Matches(YYYY_MM_DD_REGEX, {
+    message: 'to must be in YYYY-MM-DD format',
+  })
+  @IsLaterThan('from')
+  @IsOptional()
+  @ValidateIf((o) => o.from)
+  @ApiProperty({ example: '2025-01-01', required: false })
+  to?: string;
+
+  @IsEnum(TimezoneEnum)
+  @IsOptional()
+  @ApiProperty({ example: TimezoneEnum.EUROPE_ZURICH, required: false })
+  timezone?: TimezoneEnum;
 }
