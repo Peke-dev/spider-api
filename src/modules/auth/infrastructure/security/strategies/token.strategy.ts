@@ -24,6 +24,8 @@ export class TokenStrategy extends PassportStrategy(Strategy, 'token') {
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
+    console.log('validTokens: ', validTokens, ` token: ${token}`);
+
     if (validTokens.length === 0) {
       throw new UnauthorizedException('No valid tokens configured');
     }
