@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { Public } from '@common/decorators';
 
 export interface AppInfoInterface {
   name?: string;
@@ -8,6 +9,7 @@ export interface AppInfoInterface {
 @Controller('/')
 export class AppController {
   @Get()
+  @Public()
   getAppInfo(): AppInfoInterface {
     return {
       name: 'spider-api',

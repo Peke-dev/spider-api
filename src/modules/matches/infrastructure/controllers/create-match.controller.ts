@@ -1,5 +1,10 @@
 import { Controller, Post, Body, NotFoundException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CreateMatchDto } from '../../application/dto';
 import { CreateMatchUseCase, UpdateMatchUseCase } from '../../application';
 import { LeagueRepository } from '@modules/leagues/domain/repositories';
@@ -14,8 +19,10 @@ export class CreateMatchController {
   ) {}
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a match' })
   @ApiResponse({ status: 201, description: 'Match created successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid token' })
   @ApiResponse({ status: 404, description: 'League not found' })
   async create(@Body() createMatchDto: CreateMatchDto) {
     const league = await this.leagueRepository.findOneById(
