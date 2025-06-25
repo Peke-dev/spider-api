@@ -6,14 +6,14 @@ export interface AppInfoInterface {
   version?: string;
 }
 
-@Controller('/')
+@Controller(['/', '/ping'])
 export class AppController {
   @Get()
   @Public()
   getAppInfo(): AppInfoInterface {
     return {
       name: 'spider-api',
-      version: '0.0.1',
+      version: '0.0.2',
     };
   }
 }
