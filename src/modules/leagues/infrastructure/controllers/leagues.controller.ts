@@ -9,7 +9,7 @@ import {
 import { CreateLeagueDto, UpdateLeagueDto } from '../../application/dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@ApiTags('Leagues')
+@ApiTags('leagues')
 @Controller('leagues')
 export class LeaguesController {
   constructor(
@@ -21,7 +21,10 @@ export class LeaguesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new league' })
+  @ApiOperation({
+    summary: 'Create a new league',
+    operationId: 'Create League',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The league has been successfully created.',
@@ -37,7 +40,10 @@ export class LeaguesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get all leagues' })
+  @ApiOperation({
+    summary: 'Get all leagues',
+    operationId: 'Find All Leagues',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Return all leagues.',
@@ -48,7 +54,10 @@ export class LeaguesController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get a league by id' })
+  @ApiOperation({
+    summary: 'Get a league by id',
+    operationId: 'Find League By Id',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Return a league by id.',

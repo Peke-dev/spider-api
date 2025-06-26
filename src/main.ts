@@ -37,10 +37,15 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addBearerAuth()
+    .addServer('https://api.spiderfootball.com')
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, swaggerDocument);
+
+  SwaggerModule.setup('docs', app, swaggerDocument, {
+    jsonDocumentUrl: 'docs/json',
+    yamlDocumentUrl: 'docs/yaml',
+  });
 
   await app.listen(config.PORT);
 
