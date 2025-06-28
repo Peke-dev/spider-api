@@ -8,7 +8,7 @@ import { configuration, GlobalConfigType, validationSchema } from '@config';
 import { MatchesModule } from '@modules/matches';
 import { ResponseInterceptor } from '@common/interceptors';
 import { LeaguesModule } from '@modules/leagues';
-import { AuthModule, TokenAuthGuard } from '@modules/auth';
+import { AuthModule, TokenAuthGuard, ScopesAuthGuard } from '@modules/auth';
 
 import { AppController } from './app.controller';
 
@@ -43,6 +43,7 @@ import { AppController } from './app.controller';
       provide: APP_GUARD,
       useClass: TokenAuthGuard,
     },
+    ScopesAuthGuard,
   ],
   controllers: [AppController],
 })

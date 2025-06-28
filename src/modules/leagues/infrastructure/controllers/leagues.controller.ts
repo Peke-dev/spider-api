@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { HttpCode, HttpStatus } from '@nestjs/common';
 import {
   CreateLeagueUseCase,
@@ -7,10 +15,20 @@ import {
   UpdateLeagueUseCase,
 } from '../../application';
 import { CreateLeagueDto, UpdateLeagueDto } from '../../application/dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { RequiredScopes } from '@modules/auth/infrastructure/decorators';
+import { ScopesAuthGuard } from '@modules/auth/infrastructure/security/guards';
+import { Scopes } from '@modules/auth/domain/enums';
 
 @ApiTags('leagues')
 @Controller('leagues')
+@UseGuards(ScopesAuthGuard)
+@ApiBearerAuth()
 export class LeaguesController {
   constructor(
     private readonly createLeagueUseCase: CreateLeagueUseCase,
@@ -21,6 +39,7 @@ export class LeaguesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @RequiredScopes(Scopes.LEAGUES_CREATE)
   @ApiOperation({
     summary: 'Create a new league',
     operationId: 'Create League',
@@ -33,6 +52,10 @@ export class LeaguesController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid input data.',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient scopes.',
+  })
   async create(@Body() createLeagueDto: CreateLeagueDto) {
     const id = await this.createLeagueUseCase.execute(createLeagueDto);
     return { id };
@@ -40,6 +63,7 @@ export class LeaguesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @RequiredScopes(Scopes.LEAGUES_LIST)
   @ApiOperation({
     summary: 'Get all leagues',
     operationId: 'Find All Leagues',
@@ -48,12 +72,17 @@ export class LeaguesController {
     status: HttpStatus.OK,
     description: 'Return all leagues.',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient scopes.',
+  })
   async findAll() {
     return this.findAllLeaguesUseCase.execute({ status: 'enabled' });
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @RequiredScopes(Scopes.LEAGUES_READ)
   @ApiOperation({
     summary: 'Get a league by id',
     operationId: 'Find League By Id',
@@ -66,12 +95,17 @@ export class LeaguesController {
     status: HttpStatus.NOT_FOUND,
     description: 'League not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient scopes.',
+  })
   async findOne(@Param('id') id: string) {
     return this.findLeagueByIdUseCase.execute(id);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
+  @RequiredScopes(Scopes.LEAGUES_UPDATE)
   @ApiOperation({ summary: 'Update a league' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -84,6 +118,10 @@ export class LeaguesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'League not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient scopes.',
   })
   async update(
     @Param('id') id: string,

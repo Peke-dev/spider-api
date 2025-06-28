@@ -1,32 +1,21 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-http-bearer';
-import { GlobalConfigType, configuration } from '@config';
+import { Token } from '../../../domain/entities';
 
 @Injectable()
 export class TokenStrategy extends PassportStrategy(Strategy, 'token') {
   constructor(
-    @Inject(configuration.KEY)
-    private readonly configService: GlobalConfigType,
+    @Inject('TOKEN_LIST')
+    private readonly tokens: Token[],
   ) {
     super();
   }
 
-  validate(token: string): boolean {
-    const authTokens = this.configService.AUTH_TOKENS;
+  validate(token: string): any {
+    const validTokens = this.tokens.map((t) => t.id);
 
-    if (!authTokens || authTokens.trim() === '') {
-      throw new UnauthorizedException('AUTH_TOKENS not configured');
-    }
-
-    const validTokens = authTokens
-      .split(/[,;]/)
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-
-    console.log('validTokens: ', validTokens, ` token: ${token}`);
-
-    if (validTokens.length === 0) {
+    if (!validTokens.length) {
       throw new UnauthorizedException('No valid tokens configured');
     }
 
@@ -34,6 +23,12 @@ export class TokenStrategy extends PassportStrategy(Strategy, 'token') {
       throw new UnauthorizedException('Invalid token');
     }
 
-    return true;
+    // Find and return the token object
+    const tokenObject = this.tokens.find((t) => t.id === token);
+    if (!tokenObject) {
+      throw new UnauthorizedException('Token not found');
+    }
+
+    return { token: tokenObject };
   }
 }
