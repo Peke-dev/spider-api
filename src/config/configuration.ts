@@ -20,7 +20,6 @@ export const configuration = registerAs('GLOBAL_CONFIG', () => {
 
     //Auth
     JWT_SECRET: process.env.JWT_SECRET || 'private_secret',
-    AUTH_TOKENS: process.env.AUTH_TOKENS,
 
     //Mongo
     MONGO_URI: process.env.MONGO_URI,

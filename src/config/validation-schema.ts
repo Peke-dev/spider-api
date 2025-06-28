@@ -12,7 +12,6 @@ export const validationSchema = Joi.object({
 
   //App
   JWT_SECRET: Joi.string().required(),
-  AUTH_TOKENS: Joi.string(),
 
   //Mongo
   MONGO_URI: Joi.string().required(),
