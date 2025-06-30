@@ -40,6 +40,7 @@ export enum DateStringEnum {
 }
 
 export enum TimezoneEnum {
+  UTC = 'UTC',
   AFRICA_ABIDJAN = 'Africa/Abidjan',
   AFRICA_ACCRA = 'Africa/Accra',
   AFRICA_ADDIS_ABABA = 'Africa/Addis_Ababa',
