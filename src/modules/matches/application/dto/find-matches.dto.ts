@@ -13,14 +13,20 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { IsLaterThan } from '@common/decorators';
+import { Transform } from 'class-transformer';
 
 const YYYY_MM_DD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export class FindMatchesQueryDto {
-  @IsEnum(MatchTypeEnum)
+  @IsEnum(MatchTypeEnum, { each: true })
   @IsOptional()
-  @ApiProperty({ example: MatchTypeEnum.FINISHED, required: false })
-  statusType?: MatchTypeEnum;
+  @ApiProperty({
+    example: [MatchTypeEnum.FINISHED, MatchTypeEnum.IN_PLAY],
+    required: false,
+    isArray: true,
+  })
+  @Transform(({ value }) => value.split(',').map((v) => v.trim()))
+  statusType?: MatchTypeEnum | MatchTypeEnum[];
 
   @IsEnum(MatchShortStatusEnum)
   @IsOptional()
@@ -58,6 +64,6 @@ export class FindMatchesQueryDto {
 
   @IsEnum(TimezoneEnum)
   @IsOptional()
-  @ApiProperty({ example: TimezoneEnum.EUROPE_ZURICH, required: false })
+  @ApiProperty({ example: TimezoneEnum.UTC, required: false })
   timezone?: TimezoneEnum;
 }

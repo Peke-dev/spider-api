@@ -34,20 +34,21 @@ export class FindAllMatchesUseCase {
     const query = {};
 
     if (dateString) {
+      const day = dayjs();
       if (dateString === DateStringEnum.TODAY) {
-        from = dayjs().tz(timezone).format(dateFormat);
+        from = day.tz(timezone).format(dateFormat);
       }
 
       if (dateString === DateStringEnum.TOMORROW) {
-        from = dayjs().add(1, 'day').tz(timezone).format(dateFormat);
+        from = day.add(1, 'day').tz(timezone).format(dateFormat);
       }
 
       if (dateString === DateStringEnum.YESTERDAY) {
-        from = dayjs().subtract(1, 'day').tz(timezone).format(dateFormat);
+        from = day.subtract(1, 'day').tz(timezone).format(dateFormat);
       }
 
       if (dateString === DateStringEnum.LAST_WEEK) {
-        from = dayjs().subtract(1, 'week').tz(timezone).format(dateFormat);
+        from = day.subtract(1, 'week').tz(timezone).format(dateFormat);
       }
     }
 
@@ -69,7 +70,7 @@ export class FindAllMatchesUseCase {
     }
 
     if (statusType) {
-      query['status.type'] = statusType;
+      query['status.type'] = { $in: statusType };
     }
 
     if (status) {
