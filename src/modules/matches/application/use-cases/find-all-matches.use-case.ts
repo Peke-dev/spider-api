@@ -27,7 +27,7 @@ export class FindAllMatchesUseCase {
       league,
       to,
       dateString,
-      timezone = TimezoneEnum.EUROPE_MADRID,
+      timezone = TimezoneEnum.UTC,
     } = queryParams;
     let { from } = queryParams;
 
@@ -36,7 +36,7 @@ export class FindAllMatchesUseCase {
     if (dateString) {
       const day = dayjs();
       if (dateString === DateStringEnum.TODAY) {
-        from = day.tz(timezone).format(dateFormat);
+        from = day.utc().tz(timezone).format(dateFormat);
       }
 
       if (dateString === DateStringEnum.TOMORROW) {

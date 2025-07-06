@@ -1,9 +1,4 @@
-import {
-  DateStringEnum,
-  MatchShortStatusEnum,
-  MatchTypeEnum,
-  TimezoneEnum,
-} from '@modules/matches/domain';
+import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
@@ -12,10 +7,16 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
-import { IsLaterThan } from '@common/decorators';
-import { Transform } from 'class-transformer';
 
-const YYYY_MM_DD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+import { IsLaterThan } from '@common/decorators';
+
+import { DATE_FORMAT_REGEX } from '../../constants';
+import {
+  DateStringEnum,
+  MatchShortStatusEnum,
+  MatchTypeEnum,
+  TimezoneEnum,
+} from '../../domain';
 
 export class FindMatchesQueryDto {
   @IsEnum(MatchTypeEnum, { each: true })
@@ -25,12 +26,13 @@ export class FindMatchesQueryDto {
     required: false,
     isArray: true,
   })
-  @Transform(({ value }) => value.split(',').map((v) => v.trim()))
+  @Transform(({ value }) => value.split(',').map((v) => v.trim().toUpperCase()))
   statusType?: MatchTypeEnum | MatchTypeEnum[];
 
   @IsEnum(MatchShortStatusEnum)
   @IsOptional()
   @ApiProperty({ example: MatchShortStatusEnum.FT, required: false })
+  @Transform(({ value }) => value.toUpperCase().trim())
   status?: MatchShortStatusEnum;
 
   @IsUUID()
@@ -44,16 +46,17 @@ export class FindMatchesQueryDto {
   @IsEnum(DateStringEnum)
   @IsOptional()
   @ApiProperty({ example: DateStringEnum.TODAY, required: false })
+  @Transform(({ value }) => value.toUpperCase().trim())
   dateString?: DateStringEnum;
 
-  @Matches(YYYY_MM_DD_REGEX, {
+  @Matches(DATE_FORMAT_REGEX, {
     message: 'from must be in YYYY-MM-DD format',
   })
   @IsOptional()
   @ApiProperty({ example: '2025-01-01', required: false })
   from?: string;
 
-  @Matches(YYYY_MM_DD_REGEX, {
+  @Matches(DATE_FORMAT_REGEX, {
     message: 'to must be in YYYY-MM-DD format',
   })
   @IsLaterThan('from')
