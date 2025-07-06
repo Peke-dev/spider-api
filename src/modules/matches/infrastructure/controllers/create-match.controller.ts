@@ -6,7 +6,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CreateMatchDto } from '../../application/dto';
-import { CreateMatchUseCase, UpdateMatchUseCase } from '../../application';
+import { CreateMatchUseCase } from '../../application';
 import { LeagueRepository } from '@modules/leagues/domain/repositories';
 
 @ApiTags('matches')
@@ -14,7 +14,6 @@ import { LeagueRepository } from '@modules/leagues/domain/repositories';
 export class CreateMatchController {
   constructor(
     private readonly createMatchUseCase: CreateMatchUseCase,
-    private readonly updateMatchUseCase: UpdateMatchUseCase,
     private readonly leagueRepository: LeagueRepository,
   ) {}
 
