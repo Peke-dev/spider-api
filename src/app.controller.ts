@@ -7,14 +7,18 @@ export interface AppInfoInterface {
   version?: string;
 }
 
+export interface PingResponseInterface {
+  status: 'ok';
+}
+
 @ApiTags('App')
-@Controller(['/', '/ping'])
+@Controller(['/'])
 export class AppController {
   @Get()
   @Public()
   @ApiOperation({
-    summary: 'Create a new league',
-    operationId: 'Create League',
+    summary: 'Get app info',
+    operationId: 'Get App Info',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -24,6 +28,22 @@ export class AppController {
     return {
       name: 'spider-api',
       version: '0.0.2',
+    };
+  }
+
+  @Get('ping')
+  @Public()
+  @ApiOperation({
+    summary: 'Get app ping status',
+    operationId: 'Get App Ping Status',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The app ping status has been successfully retrieved.',
+  })
+  ping(): PingResponseInterface {
+    return {
+      status: 'ok',
     };
   }
 }
