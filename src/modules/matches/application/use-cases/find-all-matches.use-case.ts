@@ -31,32 +31,33 @@ export class FindAllMatchesUseCase {
     } = queryParams;
     let { from } = queryParams;
 
+    const date = dayjs().utc().tz(timezone);
+
     const query = {};
 
     if (dateString) {
-      const day = dayjs();
       if (dateString === DateStringEnum.TODAY) {
-        from = day.utc().tz(timezone).format(dateFormat);
+        from = date.format(dateFormat);
       }
 
       if (dateString === DateStringEnum.TOMORROW) {
-        from = day.add(1, 'day').tz(timezone).format(dateFormat);
+        from = date.add(1, 'day').format(dateFormat);
       }
 
       if (dateString === DateStringEnum.YESTERDAY) {
-        from = day.subtract(1, 'day').tz(timezone).format(dateFormat);
+        from = date.subtract(1, 'day').format(dateFormat);
       }
 
       if (dateString === DateStringEnum.LAST_WEEK) {
-        from = day.subtract(1, 'week').tz(timezone).format(dateFormat);
+        from = date.subtract(1, 'week').format(dateFormat);
       }
     }
 
     if (from) {
-      const fromDay = dayjs.tz(from, dateFormat, timezone).startOf('day');
+      const fromDay = dayjs.utc(from, dateFormat).tz(timezone).startOf('day');
 
       const toDay = to
-        ? dayjs.tz(to, dateFormat, timezone).endOf('day')
+        ? dayjs.utc(to, dateFormat).tz(timezone).endOf('day')
         : fromDay.endOf('day');
 
       query['timestamp'] = {
