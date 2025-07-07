@@ -5,11 +5,15 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateMatchDto } from '../../application/dto';
+import {
+  CreateMatchDto,
+  CreateMatchResponseDto,
+  ErrorResponseDto,
+} from '../../application/dto';
 import { CreateMatchUseCase } from '../../application';
 import { LeagueRepository } from '@modules/leagues/domain/repositories';
 
-@ApiTags('matches')
+@ApiTags('Matches')
 @Controller('matches')
 export class CreateMatchController {
   constructor(
@@ -19,11 +23,44 @@ export class CreateMatchController {
 
   @Post()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a match' })
-  @ApiResponse({ status: 201, description: 'Match created successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid token' })
-  @ApiResponse({ status: 404, description: 'League not found' })
-  async create(@Body() createMatchDto: CreateMatchDto) {
+  @ApiOperation({
+    summary: 'Create a new match',
+    description:
+      'Create a new match with complete match information including teams, scores, venue, league details, and match status. The league must exist in the system before creating a match.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Match created successfully',
+    type: CreateMatchResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid or missing authentication token',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'League not found - The specified league ID does not exist',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid request data',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Unprocessable Entity - Validation error in request data',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Match with the same ID already exists',
+    type: ErrorResponseDto,
+  })
+  async create(
+    @Body() createMatchDto: CreateMatchDto,
+  ): Promise<CreateMatchResponseDto> {
     const league = await this.leagueRepository.findOneById(
       createMatchDto.league.id.toString(),
     );
