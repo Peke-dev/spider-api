@@ -38,8 +38,8 @@ class Teams {
 }
 
 class Goals {
-  home?: number | null;
-  away?: number | null;
+  home: number | null;
+  away: number | null;
 }
 
 class ScoreResult {
