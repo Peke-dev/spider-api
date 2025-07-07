@@ -24,6 +24,7 @@ export class UpdateMatchController {
     summary: 'Update a match',
     description:
       'Update an existing match with new information. Only the provided fields will be updated, keeping existing values for fields not included in the request. All fields are optional for partial updates.',
+    operationId: 'Update Match',
   })
   @ApiParam({
     name: 'id',

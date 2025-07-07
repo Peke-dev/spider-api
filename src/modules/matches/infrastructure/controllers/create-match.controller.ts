@@ -27,6 +27,7 @@ export class CreateMatchController {
     summary: 'Create a new match',
     description:
       'Create a new match with complete match information including teams, scores, venue, league details, and match status. The league must exist in the system before creating a match.',
+    operationId: 'Create Match',
   })
   @ApiResponse({
     status: 201,

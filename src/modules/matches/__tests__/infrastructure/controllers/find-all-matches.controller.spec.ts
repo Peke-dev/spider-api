@@ -2,10 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FindAllMatchesController } from '../../../infrastructure/controllers/find-all-matches.controller';
 import { FindAllMatchesUseCase } from '../../../application';
 import { Match } from '../../../domain/entities';
+import { FindMatchesQueryDto } from '../../../application/dto';
 
 describe('FindAllMatchesController', () => {
   let controller: FindAllMatchesController;
-  let findAllMatchesUseCase: FindAllMatchesUseCase;
+
+  const findAllMatchesUseCaseMock = {
+    execute: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -13,17 +17,12 @@ describe('FindAllMatchesController', () => {
       providers: [
         {
           provide: FindAllMatchesUseCase,
-          useValue: {
-            execute: jest.fn(),
-          },
+          useValue: findAllMatchesUseCaseMock,
         },
       ],
     }).compile();
 
     controller = module.get<FindAllMatchesController>(FindAllMatchesController);
-    findAllMatchesUseCase = module.get<FindAllMatchesUseCase>(
-      FindAllMatchesUseCase,
-    );
   });
 
   it('should be defined', () => {
@@ -54,7 +53,7 @@ describe('FindAllMatchesController', () => {
             elapsed: 90,
           },
           league: {
-            id: 39,
+            id: '39',
             name: 'Premier League',
             country: 'England',
             logo: 'https://media.api-sports.io/football/leagues/39.png',
@@ -91,14 +90,14 @@ describe('FindAllMatchesController', () => {
         }),
       ];
 
-      jest
-        .spyOn(findAllMatchesUseCase, 'execute')
-        .mockResolvedValue(mockMatches);
+      const query: FindMatchesQueryDto = {};
 
-      const result = await controller.findAll();
+      findAllMatchesUseCaseMock.execute.mockResolvedValue(mockMatches);
+
+      const result = await controller.findAll(query);
 
       expect(result).toEqual(mockMatches);
-      expect(findAllMatchesUseCase.execute).toHaveBeenCalled();
+      expect(findAllMatchesUseCaseMock.execute).toHaveBeenCalledWith(query);
     });
   });
 });

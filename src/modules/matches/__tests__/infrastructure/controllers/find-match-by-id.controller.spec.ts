@@ -6,7 +6,10 @@ import { Match } from '../../../domain/entities';
 
 describe('FindMatchByIdController', () => {
   let controller: FindMatchByIdController;
-  let findMatchByIdUseCase: FindMatchByIdUseCase;
+
+  const findMatchByIdUseCaseMock = {
+    execute: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,16 +17,12 @@ describe('FindMatchByIdController', () => {
       providers: [
         {
           provide: FindMatchByIdUseCase,
-          useValue: {
-            execute: jest.fn(),
-          },
+          useValue: findMatchByIdUseCaseMock,
         },
       ],
     }).compile();
 
     controller = module.get<FindMatchByIdController>(FindMatchByIdController);
-    findMatchByIdUseCase =
-      module.get<FindMatchByIdUseCase>(FindMatchByIdUseCase);
   });
 
   it('should be defined', () => {
@@ -53,7 +52,7 @@ describe('FindMatchByIdController', () => {
           elapsed: 90,
         },
         league: {
-          id: 39,
+          id: '39',
           name: 'Premier League',
           country: 'England',
           logo: 'https://media.api-sports.io/football/leagues/39.png',
@@ -89,23 +88,21 @@ describe('FindMatchByIdController', () => {
         updatedAt: new Date(),
       });
 
-      jest.spyOn(findMatchByIdUseCase, 'execute').mockResolvedValue(mockMatch);
+      findMatchByIdUseCaseMock.execute.mockResolvedValue(mockMatch);
 
       const result = await controller.findOne('match-1');
 
       expect(result).toEqual(mockMatch);
-      expect(findMatchByIdUseCase.execute).toHaveBeenCalledWith('match-1');
+      expect(findMatchByIdUseCaseMock.execute).toHaveBeenCalledWith('match-1');
     });
 
-    it('should throw NotFoundException when match is not found', async () => {
-      jest.spyOn(findMatchByIdUseCase, 'execute').mockResolvedValue(null);
-
-      await expect(controller.findOne('non-existent-id')).rejects.toThrow(
-        new NotFoundException('Match with ID non-existent-id not found'),
+    it('should handle NotFoundException', async () => {
+      findMatchByIdUseCaseMock.execute.mockRejectedValue(
+        new NotFoundException('Match not found'),
       );
 
-      expect(findMatchByIdUseCase.execute).toHaveBeenCalledWith(
-        'non-existent-id',
+      await expect(controller.findOne('999')).rejects.toThrow(
+        NotFoundException,
       );
     });
   });

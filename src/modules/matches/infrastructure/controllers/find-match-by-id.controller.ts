@@ -20,6 +20,7 @@ export class FindMatchByIdController {
     summary: 'Get a match by ID',
     description:
       'Retrieve detailed information about a specific match using its unique identifier. Returns complete match data including teams, scores, venue, and status information.',
+    operationId: 'Find Match By Id',
   })
   @ApiParam({
     name: 'id',

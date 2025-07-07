@@ -24,6 +24,7 @@ export class FindAllMatchesController {
     summary: 'Get all matches',
     description:
       'Retrieve a list of all matches with optional filtering by status, league, date range, and timezone. Supports pagination and various query parameters for flexible match searching.',
+    operationId: 'Find All Matches',
   })
   @ApiResponse({
     status: 200,

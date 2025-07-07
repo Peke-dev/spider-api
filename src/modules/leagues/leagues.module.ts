@@ -3,7 +3,7 @@ import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import * as UseCases from './application/use-cases';
-import { LeaguesController } from './infrastructure/controllers/leagues.controller';
+import * as Controllers from './infrastructure/controllers';
 import { LeagueMongooseRepository } from './infrastructure/repositories';
 import { LEAGUES_COLLECTION } from './constants';
 import { LeagueSchema, LeagueDocument } from './infrastructure/schemas';
@@ -25,6 +25,6 @@ import { LeagueRepository } from './domain/repositories';
     },
   ],
   exports: [...Object.values(UseCases)],
-  controllers: [LeaguesController],
+  controllers: [...Object.values(Controllers)],
 })
 export class LeaguesModule {}
