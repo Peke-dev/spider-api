@@ -8,5 +8,13 @@ export enum Scopes {
   LEAGUES_WRITE = 'leagues.write',
   LEAGUES_READ_WRITE = 'leagues.read.write',
   LEAGUES_READ_WRITE_DELETE = 'leagues.read.write.delete',
+  WEBHOOKS_LIST = 'webhooks.list',
+  WEBHOOKS_CREATE = 'webhooks.create',
+  WEBHOOKS_UPDATE = 'webhooks.update',
+  WEBHOOKS_DELETE = 'webhooks.delete',
+  WEBHOOKS_READ = 'webhooks.read',
+  WEBHOOKS_WRITE = 'webhooks.write',
+  WEBHOOKS_READ_WRITE = 'webhooks.read.write',
+  WEBHOOKS_READ_WRITE_DELETE = 'webhooks.read.write.delete',
   TOKENS_ALL = 'tokens.all',
 }
