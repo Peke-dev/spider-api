@@ -11,6 +11,7 @@ import { LeaguesModule } from '@modules/leagues';
 import { AuthModule, TokenAuthGuard, ScopesAuthGuard } from '@modules/auth';
 
 import { AppController } from './app.controller';
+import { WebhooksModule } from '@modules/webhooks';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AppController } from './app.controller';
     }),
     MatchesModule,
     LeaguesModule,
+    WebhooksModule,
     MongooseModule.forRootAsync({
       useFactory: (config: GlobalConfigType) => ({
         uri: config.MONGO_URI,
