@@ -32,6 +32,7 @@
     "@nestjs/swagger": "^11.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/passport-http-bearer": "^1.0.41",
+    "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -107,6 +108,9 @@
       ],
       "@config": [
         "<rootDir>/config"
+      ],
+      "@common/(.*)$": [
+        "<rootDir>/common/$1"
       ]
     }
   }
