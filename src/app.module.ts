@@ -3,6 +3,7 @@ import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LoggerModule } from 'nestjs-pino';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { configuration, GlobalConfigType, validationSchema } from '@config';
 import { MatchesModule } from '@modules/matches';
@@ -16,6 +17,7 @@ import { WebhooksModule } from '@modules/webhooks';
 @Module({
   imports: [
     LoggerModule.forRoot(),
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `${process.env.NODE_ENV ? process.env.NODE_ENV : ''}.env`,
