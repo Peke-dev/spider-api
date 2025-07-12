@@ -16,5 +16,6 @@ export enum Scopes {
   WEBHOOKS_WRITE = 'webhooks.write',
   WEBHOOKS_READ_WRITE = 'webhooks.read.write',
   WEBHOOKS_READ_WRITE_DELETE = 'webhooks.read.write.delete',
+  MATCHES_EVENTS_CREATE = 'matches.events.create',
   TOKENS_ALL = 'tokens.all',
 }

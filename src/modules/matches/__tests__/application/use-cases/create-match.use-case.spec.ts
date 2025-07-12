@@ -3,6 +3,9 @@ import { CreateMatchUseCase } from '../../../application/use-cases';
 import { Match } from '../../../domain/entities';
 import { MATCHES_COLLECTION } from '../../../constants';
 import { RepositoryInterface } from '@modules/database';
+import { v4 as uuidv4 } from 'uuid';
+import { CreateMatchDto } from '../../../application/dto';
+import { MatchShortStatusEnum } from '@modules/matches/domain';
 
 describe('CreateMatchUseCase', () => {
   let useCase: CreateMatchUseCase;
@@ -31,7 +34,8 @@ describe('CreateMatchUseCase', () => {
 
   describe('execute', () => {
     it('should create a match successfully', async () => {
-      const matchData: Partial<Match> = {
+      const matchData: CreateMatchDto = {
+        id: uuidv4(),
         referee: 'A. Taylor',
         timezone: 'UTC',
         date: '2024-03-16T15:00:00+00:00',
@@ -41,17 +45,17 @@ describe('CreateMatchUseCase', () => {
           second: 45,
         },
         venue: {
-          id: 1,
+          id: uuidv4(),
           name: 'Old Trafford',
           city: 'Manchester',
         },
         status: {
           long: 'Match Finished',
-          short: 'FT',
+          short: MatchShortStatusEnum.FT,
           elapsed: 90,
         },
         league: {
-          id: 39,
+          id: uuidv4(),
           name: 'Premier League',
           country: 'England',
           logo: 'https://media.api-sports.io/football/leagues/39.png',
@@ -60,13 +64,13 @@ describe('CreateMatchUseCase', () => {
         },
         teams: {
           home: {
-            id: 33,
+            id: uuidv4(),
             name: 'Manchester United',
             logo: 'https://media.api-sports.io/football/teams/33.png',
             winner: true,
           },
           away: {
-            id: 34,
+            id: uuidv4(),
             name: 'Newcastle',
             logo: 'https://media.api-sports.io/football/teams/34.png',
             winner: false,

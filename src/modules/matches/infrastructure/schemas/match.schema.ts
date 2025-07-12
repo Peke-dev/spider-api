@@ -85,13 +85,13 @@ export class Match {
   @Prop({ type: Object, required: true })
   teams: {
     home: {
-      id: number;
+      id: string;
       name: string;
       logo: string;
       winner: boolean;
     };
     away: {
-      id: number;
+      id: string;
       name: string;
       logo: string;
       winner: boolean;
@@ -123,6 +123,31 @@ export class Match {
       away?: number | null;
     };
   };
+
+  @Prop({ type: Array, required: false, default: [] })
+  events: Array<{
+    id: string;
+    time: {
+      elapsed: number;
+      extra: number | null;
+    };
+    team: {
+      id: string;
+      name: string;
+      logo: string;
+    };
+    player: {
+      id: string | null;
+      name: string | null;
+    };
+    assist: {
+      id: string | null;
+      name: string | null;
+    };
+    type: string;
+    detail: string;
+    comments: string | null;
+  }>;
 
   @Prop({ required: true })
   createdAt: Date;

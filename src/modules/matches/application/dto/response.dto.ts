@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Match } from '../../domain';
+import { MatchEvent } from '@modules/matches/domain/entities/match-event.entity';
+
+const uuidField = {
+  example: '123e4567-e89b-12d3-a456-426614174000',
+  description: 'Unique identifier of the match',
+};
 
 export class CreateMatchResponseDto {
   @ApiProperty({
@@ -23,11 +29,8 @@ export class UpdateMatchResponseDto {
   message: string;
 }
 
-export class MatchResponseDto implements Match {
-  @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'Unique identifier of the match',
-  })
+export class MatchResponseDto implements Partial<Match> {
+  @ApiProperty(uuidField)
   id?: string;
 
   @ApiProperty({
@@ -73,7 +76,7 @@ export class MatchResponseDto implements Match {
     description: 'Match venue information',
   })
   venue: {
-    id: number;
+    id?: string | null;
     name: string;
     city: string;
   };
@@ -133,13 +136,13 @@ export class MatchResponseDto implements Match {
   })
   teams: {
     home: {
-      id: number;
+      id: string;
       name: string;
       logo: string;
       winner: boolean;
     };
     away: {
-      id: number;
+      id: string;
       name: string;
       logo: string;
       winner: boolean;
@@ -152,8 +155,8 @@ export class MatchResponseDto implements Match {
     required: false,
   })
   goals: {
-    home: number | null;
-    away: number | null;
+    home: number;
+    away: number;
   };
 
   @ApiProperty({
@@ -203,4 +206,78 @@ export class ErrorResponseDto {
     description: 'Error type',
   })
   error: string;
+}
+
+export class MatchEventResponseDto implements MatchEvent {
+  @ApiProperty(uuidField)
+  matchId: string;
+  @ApiProperty(uuidField)
+  id: string;
+
+  @ApiProperty({
+    example: { elapsed: 10, extra: null },
+    description: 'Time of the match event',
+  })
+  time: {
+    elapsed: number;
+    extra: number | null;
+  };
+
+  @ApiProperty({
+    example: { id: 1, name: 'Team 1', logo: 'https://example.com/logo.png' },
+    description: 'Team of the match event',
+  })
+  team: {
+    id: string;
+    name: string;
+    logo: string;
+  };
+
+  @ApiProperty({
+    example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Player 1' },
+    description: 'Player of the match event',
+  })
+  player: {
+    id: string | null;
+    name: string | null;
+  };
+
+  @ApiProperty({
+    example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Assist 1' },
+    description: 'Assist of the match event',
+  })
+  assist: {
+    id: string | null;
+    name: string | null;
+  };
+
+  @ApiProperty({
+    example: 'goal',
+    description: 'Type of the match event',
+  })
+  type: string;
+
+  @ApiProperty({
+    example: 'Goal scored by Player 1',
+    description: 'Detail of the match event',
+  })
+  detail: string;
+
+  @ApiProperty({
+    example: 'Great goal by Player 1',
+    description: 'Comments of the match event',
+  })
+  comments: string | null;
+
+  @ApiProperty({
+    example: '2024-03-16T15:00:00.000Z',
+    description: 'Creation timestamp',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2024-03-16T15:00:00.000Z',
+    description: 'Last update timestamp',
+  })
+  updatedAt: Date;
 }

@@ -1,10 +1,12 @@
+import { MatchEvent } from './match-event.entity';
+
 class Period {
   first: number;
   second: number;
 }
 
-class Venue {
-  id: number;
+export class Venue {
+  id?: string | null;
   name: string;
   city: string;
 }
@@ -26,7 +28,7 @@ class League {
 }
 
 class Team {
-  id: number;
+  id: string;
   name: string;
   logo: string;
   winner: boolean;
@@ -38,8 +40,8 @@ class Teams {
 }
 
 class Goals {
-  home: number | null;
-  away: number | null;
+  home: number;
+  away: number;
 }
 
 class ScoreResult {
@@ -67,6 +69,7 @@ export class Match {
   teams: Teams;
   goals: Goals;
   score: Score;
+  events?: MatchEvent[];
   createdAt: Date;
   updatedAt: Date;
 
