@@ -4,9 +4,11 @@ import { getObjectDifferences } from '@utils';
 
 import {
   MatchRepository,
-  getMatchTypeByStatus,
   MATCH_EVENTS,
   MatchUpdatedEvent,
+  Match,
+  MatchEvent,
+  MatchTypeEnum,
 } from '../../domain';
 import { UpdateMatchDto } from '../dto';
 
@@ -18,13 +20,64 @@ export class UpdateMatchUseCase {
   ) {}
 
   async execute(id: string, newData: UpdateMatchDto): Promise<string> {
-    const existingMatch = await this.repository.findOneById(id);
+    const match = await this.repository.findOneById(id);
 
-    if (!existingMatch) {
+    if (!match) {
       throw new NotFoundException(`Match with ID ${id} not found`);
     }
 
-    const differences = getObjectDifferences(newData, existingMatch, [
+    let newMatchEvents: MatchEvent[] = [];
+
+    if (newData.events) {
+      newMatchEvents = newData.events.map((eventData, index) => {
+        const n = new MatchEvent({
+          ...match.events[index],
+          ...eventData,
+          matchId: match.id,
+        });
+
+        return n;
+      });
+    }
+
+    const newMatch = new Match({
+      ...match,
+      periods: {
+        ...match.periods,
+        ...newData.periods,
+      },
+      status: {
+        ...match.status,
+        ...newData.status,
+      },
+      teams: {
+        home: {
+          ...match.teams.home,
+          ...newData.teams?.home,
+        },
+        away: {
+          ...match.teams.away,
+          ...newData.teams?.away,
+        },
+      },
+      venue: {
+        ...match.venue,
+        ...newData.venue,
+      },
+      score: newData.score || match.score,
+      goals: newData.goals || match.goals,
+      date: newData.date || match.date,
+      timezone: newData.timezone || match.timezone,
+      events: newMatchEvents,
+      timestamp: newData.timestamp || match.timestamp,
+      referee: newData.referee || match.referee,
+      league: {
+        ...match.league,
+        ...newData.league,
+      },
+    });
+
+    const differences = getObjectDifferences(match, newMatch, [
       'createdAt',
       'updatedAt',
       'date',
@@ -36,27 +89,37 @@ export class UpdateMatchUseCase {
       return id;
     }
 
-    let status = newData.status;
+    const eventsDifferences = differences.some((diff) =>
+      diff.path.includes('events'),
+    );
 
-    if (status && status.short) {
-      status = {
-        ...status,
-        type: getMatchTypeByStatus(status.short),
-      };
+    if (
+      eventsDifferences &&
+      newMatch.status.type === MatchTypeEnum.IN_PLAY &&
+      newMatchEvents.length > match.events.length
+    ) {
+      const newEvents = newMatchEvents.filter(
+        (event) => !match.eventExists(event),
+      );
+
+      newEvents.forEach((event) => {
+        this.eventEmitter.emit(MATCH_EVENTS.EVENT_CREATED, {
+          id: event.id,
+          matchId: id,
+        });
+      });
     }
 
-    const matchUpdated = await this.repository.update(id, {
-      ...newData,
-      status,
+    await this.repository.update(id, {
+      ...newMatch,
       updatedAt: new Date(),
     });
 
-    // Emit match updated event
     const event: MatchUpdatedEvent = {
       matchId: id,
     };
-    this.eventEmitter.emit(MATCH_EVENTS.MATCH_UPDATED, event);
+    this.eventEmitter.emit(MATCH_EVENTS.UPDATED, event);
 
-    return matchUpdated;
+    return id;
   }
 }

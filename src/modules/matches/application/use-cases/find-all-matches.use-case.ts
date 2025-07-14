@@ -18,7 +18,9 @@ dayjs.extend(timezone);
 export class FindAllMatchesUseCase {
   constructor(private readonly repository: MatchRepository) {}
 
-  async execute(queryParams: FindMatchesQueryDto = {}): Promise<Match[]> {
+  async execute(
+    queryParams: FindMatchesQueryDto = {},
+  ): Promise<Omit<Match, 'eventExists'>[]> {
     const dateFormat = 'YYYY-MM-DD';
 
     const {

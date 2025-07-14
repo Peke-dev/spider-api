@@ -50,8 +50,6 @@ export class CreateMatchEventUseCase {
 
     const updatedEvents = [...currentEvents, newEvent];
 
-    console.log(updatedEvents);
-
     await this.repository.update(matchId, {
       events: updatedEvents,
       updatedAt: new Date(),
