@@ -8,38 +8,45 @@ import {
   IsBoolean,
   IsUUID,
   IsEnum,
+  ValidateIf,
 } from 'class-validator';
+
 import { Type } from 'class-transformer';
 
 import { MatchShortStatusEnum } from '../../domain';
+import { UpdateMatchEventDto } from './update-match.dto';
 
 class PeriodDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ example: 45 })
-  first: number;
+  @ValidateIf((object, value) => value !== null)
+  first: number | null;
 
   @IsNumber()
   @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: 45 })
-  second: number;
+  second: number | null;
 }
 
 class VenueDto {
   @IsUUID()
-  @IsOptional()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
-  id?: string | null;
+  id: string | null;
 
   @IsString()
   @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: 'Old Trafford' })
-  name: string;
+  name: string | null;
 
   @IsString()
   @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: 'Manchester' })
-  city: string;
+  city: string | null;
 }
 
 class StatusDto {
@@ -56,12 +63,14 @@ class StatusDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ example: 90 })
-  elapsed: number;
+  @ValidateIf((object, value) => value !== null)
+  elapsed: number | null;
 
   @IsNumber()
   @IsOptional()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: 0, required: false })
-  extra?: number | null;
+  extra: number | null;
 }
 
 class LeagueDto {
@@ -129,8 +138,9 @@ class TeamDto {
 
   @IsBoolean()
   @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
   @ApiProperty({ example: true })
-  winner: boolean;
+  winner: boolean | null;
 }
 
 class TeamsDto {
@@ -251,4 +261,14 @@ export class CreateMatchDto {
   @Type(() => ScoreDto)
   @ApiProperty({ type: ScoreDto })
   score: ScoreDto;
+
+  @ValidateNested({ each: true })
+  @Type(() => UpdateMatchEventDto)
+  @ApiProperty({
+    type: UpdateMatchEventDto,
+    required: false,
+    isArray: true,
+  })
+  @IsOptional()
+  events?: UpdateMatchEventDto[];
 }

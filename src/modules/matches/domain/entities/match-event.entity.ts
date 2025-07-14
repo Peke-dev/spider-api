@@ -1,7 +1,6 @@
 import { v5 as uuidv5 } from 'uuid';
 
 type newMatchEventParams = {
-  id?: string;
   matchId: string;
   time: {
     elapsed: number;
@@ -23,11 +22,18 @@ type newMatchEventParams = {
   type: string;
   detail: string;
   comments?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export class EventIdValueObject {
   id: string;
+
   constructor(matchId, elapsed: number, teamId: string) {
+    if (!matchId) {
+      throw new Error('Match ID is required');
+    }
+
     this.id = uuidv5(
       `${matchId}-${elapsed}-${teamId}`,
       '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
@@ -62,14 +68,13 @@ export class MatchEvent {
   matchId: string;
 
   constructor(props: newMatchEventParams) {
-    this.id = new EventIdValueObject(
-      props.matchId,
-      props.time.elapsed,
-      props.team.id,
-    ).id;
+    const currentDate = new Date();
+    const { matchId, time, team, createdAt, updatedAt } = props;
 
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    const id = new EventIdValueObject(matchId, time.elapsed, team.id).id;
+
+    this.createdAt = createdAt || currentDate;
+    this.updatedAt = updatedAt || currentDate;
 
     if (!props.comments) {
       this.comments = null;
@@ -77,6 +82,7 @@ export class MatchEvent {
 
     Object.assign(this, {
       ...props,
+      id,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     });

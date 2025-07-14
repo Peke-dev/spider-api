@@ -7,6 +7,7 @@ import {
   IsUUID,
   IsEnum,
   IsBoolean,
+  ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -146,6 +147,22 @@ class TeamDto {
   winner?: boolean;
 }
 
+class MatchEventTeamDto {
+  @IsUUID()
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id: string;
+
+  @IsString()
+  @ApiProperty({ example: 'Team 1' })
+  name: string;
+
+  @IsString()
+  @ApiProperty({
+    example: 'https://media.api-sports.io/football/teams/33.png',
+  })
+  logo: string;
+}
+
 class TeamsDto {
   @ValidateNested()
   @Type(() => TeamDto)
@@ -162,52 +179,149 @@ class TeamsDto {
 
 class GoalsDto {
   @IsNumber()
-  @IsOptional()
-  @ApiProperty({ example: 2, required: false })
-  home?: number;
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: 2 })
+  home: number | null;
 
   @IsNumber()
-  @IsOptional()
-  @ApiProperty({ example: 1, required: false })
-  away?: number;
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: 1 })
+  away: number | null;
 }
 
 class ScoreResultDto {
   @IsNumber()
-  @IsOptional()
-  @ApiProperty({ example: 1, required: false })
-  home?: number;
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: 1 })
+  home: number | null;
 
   @IsNumber()
-  @IsOptional()
-  @ApiProperty({ example: 0, required: false })
-  away?: number;
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: 0 })
+  away: number | null;
 }
 
 class ScoreDto {
   @ValidateNested()
   @Type(() => ScoreResultDto)
-  @IsOptional()
-  @ApiProperty({ type: ScoreResultDto, required: false })
-  halftime?: ScoreResultDto;
+  @ApiProperty({ type: ScoreResultDto })
+  halftime: ScoreResultDto;
 
   @ValidateNested()
   @Type(() => ScoreResultDto)
-  @IsOptional()
-  @ApiProperty({ type: ScoreResultDto, required: false })
-  fulltime?: ScoreResultDto;
+  @ApiProperty({ type: ScoreResultDto })
+  fulltime: ScoreResultDto;
 
   @ValidateNested()
   @Type(() => ScoreResultDto)
-  @IsOptional()
-  @ApiProperty({ type: ScoreResultDto, required: false })
-  extratime?: ScoreResultDto;
+  @ApiProperty({ type: ScoreResultDto })
+  extratime: ScoreResultDto;
 
   @ValidateNested()
   @Type(() => ScoreResultDto)
-  @IsOptional()
-  @ApiProperty({ type: ScoreResultDto, required: false })
-  penalty?: ScoreResultDto;
+  @ApiProperty({ type: ScoreResultDto })
+  penalty: ScoreResultDto;
+}
+
+class TimeDto {
+  @IsNumber()
+  @ApiProperty({ example: 10 })
+  elapsed: number;
+
+  @IsNumber()
+  @ApiProperty({ example: 0 })
+  @ValidateIf((object, value) => value !== null)
+  extra: number | null;
+}
+
+class PlayerDto {
+  @IsString()
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: 'Player 1' })
+  name: string | null;
+
+  @IsUUID()
+  @ValidateIf((object, value) => value !== null)
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  id: string | null;
+}
+
+class AssistDto {
+  @IsString()
+  @ApiProperty({ example: 'Assist 1' })
+  @ValidateIf((object, value) => value !== null)
+  name: string | null;
+
+  @IsUUID()
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  @ValidateIf((object, value) => value !== null)
+  id: string | null;
+}
+
+export class UpdateMatchEventDto {
+  @ApiProperty({
+    example: { elapsed: 10, extra: null },
+    description: 'Time of the match event',
+  })
+  @ValidateNested()
+  @Type(() => TimeDto)
+  @ApiProperty({ type: TimeDto })
+  time: TimeDto;
+
+  @ApiProperty({
+    example: {
+      id: '123e4567-e89b-12d3-a456-426614174000',
+      name: 'Team 1',
+      logo: 'https://example.com/logo.png',
+    },
+    description: 'Team of the match event',
+  })
+  @ValidateNested()
+  @Type(() => MatchEventTeamDto)
+  @ApiProperty({ type: MatchEventTeamDto })
+  team: MatchEventTeamDto;
+
+  @ApiProperty({
+    example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Player 1' },
+    description: 'Player of the match event',
+  })
+  @ValidateNested()
+  @Type(() => PlayerDto)
+  @ApiProperty({ type: PlayerDto })
+  player: PlayerDto;
+
+  @ApiProperty({
+    example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Assist 1' },
+    description: 'Assist of the match event',
+  })
+  @ValidateNested()
+  @Type(() => AssistDto)
+  @ApiProperty({ type: AssistDto })
+  assist: AssistDto;
+
+  @ApiProperty({
+    example: 'goal',
+    description: 'Type of the match event',
+  })
+  @IsString()
+  @ApiProperty({ example: 'goal' })
+  type: string;
+
+  @ApiProperty({
+    example: 'Goal scored by Player 1',
+    description: 'Detail of the match event',
+  })
+  @IsString()
+  detail: string;
+
+  @ApiProperty({
+    example: 'Great goal by Player 1',
+    description: 'Comments of the match event',
+  })
+  @IsString()
+  @ApiProperty({ example: 'Great goal by Player 1' })
+  @ValidateIf((object, value) => value !== null)
+  comments: string | null;
 }
 
 export class UpdateMatchDto {
@@ -272,4 +386,14 @@ export class UpdateMatchDto {
   @IsOptional()
   @ApiProperty({ type: ScoreDto, required: false })
   score?: ScoreDto;
+
+  @ValidateNested()
+  @Type(() => UpdateMatchEventDto)
+  @IsOptional()
+  @ApiProperty({
+    type: UpdateMatchEventDto,
+    required: false,
+    isArray: true,
+  })
+  events?: UpdateMatchEventDto[];
 }

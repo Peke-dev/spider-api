@@ -2,6 +2,32 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { MatchTypeEnum, MatchShortStatusEnum } from '../../domain';
 
+class MatchLeagueSchema {
+  @Prop({ type: String, index: true })
+  id: string;
+
+  @Prop({ type: String })
+  name: string;
+
+  @Prop({ type: String })
+  country: string;
+
+  @Prop({ type: String })
+  logo: string;
+
+  @Prop({ type: String, required: false, default: null })
+  flag?: string | null;
+
+  @Prop({ type: Number })
+  season: number;
+
+  @Prop({ type: String })
+  round: string;
+
+  @Prop({ type: Boolean, required: false, default: null })
+  standings?: boolean | null;
+}
+
 export class VenueSchema {
   @Prop({ type: String, default: null })
   id: string | null;
@@ -25,6 +51,9 @@ export class StatusSchema {
 
   @Prop({ type: MatchTypeEnum, required: true })
   type: MatchTypeEnum;
+
+  @Prop({ type: Number, required: false, default: null })
+  extra: number | null;
 }
 
 @Schema({
@@ -70,17 +99,8 @@ export class Match {
   @Prop({ type: StatusSchema, required: true })
   status: StatusSchema;
 
-  @Prop({ type: Object, required: true })
-  league: {
-    id: string;
-    name: string;
-    country: string;
-    logo: string;
-    flag?: string | null;
-    season: number;
-    round: string;
-    standings?: boolean | null;
-  };
+  @Prop({ type: MatchLeagueSchema, required: true })
+  league: MatchLeagueSchema;
 
   @Prop({ type: Object, required: true })
   teams: {

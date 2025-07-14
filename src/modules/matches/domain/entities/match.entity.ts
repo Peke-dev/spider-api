@@ -1,8 +1,51 @@
+import { MatchShortStatusEnum, MatchTypeEnum } from '../enums';
+import { getMatchTypeByStatus } from '../mappers';
 import { MatchEvent } from './match-event.entity';
 
+const isNullOrType = (value: any, type: string) =>
+  value === null || typeof value === type;
+
+class MatchStatusVO {
+  long: string;
+  short: MatchShortStatusEnum;
+  elapsed: number;
+  type: MatchTypeEnum;
+  extra: number | null;
+
+  constructor(
+    long: string,
+    short: MatchShortStatusEnum,
+    elapsed: number,
+    extra: number | null,
+  ) {
+    this.long = long;
+    this.short = short;
+    this.elapsed = elapsed;
+    this.extra = extra;
+
+    if (
+      !isNullOrType(long, 'string') ||
+      !isNullOrType(short, 'string') ||
+      !isNullOrType(elapsed, 'number')
+    ) {
+      throw new Error(
+        'Invalid status properties long, short or elapsed are required',
+      );
+    }
+
+    const type = getMatchTypeByStatus(short);
+
+    if (!type) {
+      throw new Error(`Invalid status: ${short}`);
+    }
+
+    this.type = type;
+  }
+}
+
 class Period {
-  first: number;
-  second: number;
+  first: number | null;
+  second: number | null;
 }
 
 export class Venue {
@@ -13,8 +56,10 @@ export class Venue {
 
 class Status {
   long: string;
-  short: string;
+  short: MatchShortStatusEnum;
   elapsed: number;
+  type: MatchTypeEnum;
+  extra: number | null;
 }
 
 class League {
@@ -40,13 +85,13 @@ class Teams {
 }
 
 class Goals {
-  home: number;
-  away: number;
+  home: number | null;
+  away: number | null;
 }
 
 class ScoreResult {
-  home?: number | null;
-  away?: number | null;
+  home: number | null;
+  away: number | null;
 }
 
 class Score {
@@ -56,9 +101,27 @@ class Score {
   penalty: ScoreResult;
 }
 
-export class Match {
-  id?: string;
+export interface MatchDto {
+  id: string;
   referee?: string | null;
+  timezone: string;
+  date: string;
+  timestamp: number;
+  periods: Period;
+  venue: Venue;
+  status: MatchStatusVO;
+  league: League;
+  teams: Teams;
+  goals: Goals;
+  score: Score;
+  events: MatchEvent[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export class Match {
+  id: string;
+  referee: string | null;
   timezone: string;
   date: string;
   timestamp: number;
@@ -69,11 +132,38 @@ export class Match {
   teams: Teams;
   goals: Goals;
   score: Score;
-  events?: MatchEvent[];
+  events: MatchEvent[] = [];
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(props: Partial<Match>) {
-    Object.assign(this, props);
+  constructor(props: MatchDto) {
+    const currentDate = new Date();
+
+    const { status } = props;
+
+    const statusVO: MatchStatusVO = new MatchStatusVO(
+      status.long,
+      status.short,
+      status.elapsed,
+      status.extra,
+    );
+
+    this.events = props.events?.map((event) => new MatchEvent(event)) || [];
+
+    if (props.referee) {
+      this.referee = props.referee || null;
+    }
+
+    Object.assign(this, {
+      ...props,
+      status: statusVO,
+      events: props.events?.map((event) => new MatchEvent(event)),
+      createdAt: props.createdAt || currentDate,
+      updatedAt: props.updatedAt || currentDate,
+    });
+  }
+
+  eventExists(newEvent: MatchEvent): boolean {
+    return this.events.some((event) => event.id === newEvent.id);
   }
 }

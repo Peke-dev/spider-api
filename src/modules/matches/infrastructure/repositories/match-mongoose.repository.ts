@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 
 import { MongooseRepository as BaseRepository } from '@infrastructure/repositories';
 
-import { Match } from '../../domain/entities';
+import { Match, MatchDto } from '../../domain/entities';
 import { MatchDocument } from '../schemas';
 
 export class MatchMongooseRepository extends BaseRepository<
@@ -15,6 +15,6 @@ export class MatchMongooseRepository extends BaseRepository<
 
   toDomain(match: MatchDocument): Match {
     const data = match.toJSON();
-    return new Match(data);
+    return new Match(data as MatchDto);
   }
 }
