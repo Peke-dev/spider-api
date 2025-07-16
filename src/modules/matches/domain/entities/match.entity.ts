@@ -62,7 +62,7 @@ class Status {
   extra: number | null;
 }
 
-class League {
+export class MatchLeague {
   id: string;
   name: string;
   country: string;
@@ -110,7 +110,7 @@ export interface MatchDto {
   periods: Period;
   venue: Venue;
   status: MatchStatusVO;
-  league: League;
+  league: MatchLeague;
   teams: Teams;
   goals: Goals;
   score: Score;
@@ -128,7 +128,7 @@ export class Match {
   periods: Period;
   venue: Venue;
   status: Status;
-  league: League;
+  league: MatchLeague;
   teams: Teams;
   goals: Goals;
   score: Score;

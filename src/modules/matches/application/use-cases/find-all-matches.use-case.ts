@@ -10,6 +10,7 @@ import {
   TimezoneEnum,
 } from '../../domain';
 import { FindMatchesQueryDto } from '../dto';
+import { FindAllOptionsDto } from '@application/dtos';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -20,6 +21,7 @@ export class FindAllMatchesUseCase {
 
   async execute(
     queryParams: FindMatchesQueryDto = {},
+    options: FindAllOptionsDto = {},
   ): Promise<Omit<Match, 'eventExists'>[]> {
     const dateFormat = 'YYYY-MM-DD';
 
@@ -80,9 +82,7 @@ export class FindAllMatchesUseCase {
       query['status.short'] = status;
     }
 
-    const matches = await this.repository.findAll(query, {
-      orderBy: 'date',
-    });
+    const matches = await this.repository.findAll(query, options);
 
     return matches.map((match) => ({
       ...match,

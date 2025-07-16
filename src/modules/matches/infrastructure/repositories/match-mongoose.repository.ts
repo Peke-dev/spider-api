@@ -1,9 +1,10 @@
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 
 import { MongooseRepository as BaseRepository } from '@infrastructure/repositories';
 
 import { Match, MatchDto } from '../../domain/entities';
 import { MatchDocument } from '../schemas';
+import { FindAllOptionsDto } from '@application/dtos';
 
 export class MatchMongooseRepository extends BaseRepository<
   MatchDocument,
@@ -11,6 +12,13 @@ export class MatchMongooseRepository extends BaseRepository<
 > {
   constructor(private readonly matchModel: Model<MatchDocument>) {
     super(matchModel);
+  }
+
+  async findAll(
+    query?: QueryOptions<MatchDocument>,
+    options?: FindAllOptionsDto,
+  ): Promise<Match[]> {
+    return await super.findAll(query || {}, options);
   }
 
   toDomain(match: MatchDocument): Match {
