@@ -6,13 +6,16 @@ export const validationSchema = Joi.object({
   PORT: Joi.number().default(8080),
 
   //Firestore
-  FIRESTORE_PROJECT_ID: Joi.string().required(),
-  FIRESTORE_PRIVATE_KEY: Joi.string(),
-  FIRESTORE_CLIENT_EMAIL: Joi.string().required(),
+  // FIRESTORE_PROJECT_ID: Joi.string().required(),
+  // FIRESTORE_PRIVATE_KEY: Joi.string(),
+  // FIRESTORE_CLIENT_EMAIL: Joi.string().required(),
 
   //App
-  JWT_SECRET: Joi.string().required(),
+  // JWT_SECRET: Joi.string().required(),
 
   //Mongo
   MONGO_URI: Joi.string().required(),
+
+  //Telegram
+  TELEGRAM_BOT_TOKEN: Joi.string().required(),
 });

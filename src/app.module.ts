@@ -13,6 +13,7 @@ import { AuthModule, TokenAuthGuard, ScopesAuthGuard } from '@modules/auth';
 
 import { AppController } from './app.controller';
 import { WebhooksModule } from '@modules/webhooks';
+import { BotModule } from '@modules/bot/bot.module';
 
 @Module({
   imports: [
@@ -36,6 +37,12 @@ import { WebhooksModule } from '@modules/webhooks';
         uri: config.MONGO_URI,
       }),
       inject: [configuration.KEY],
+    }),
+    BotModule.registerAsync({
+      inject: [configuration.KEY],
+      useFactory: (config: GlobalConfigType) => ({
+        token: config.TELEGRAM_BOT_TOKEN || '',
+      }),
     }),
   ],
   providers: [

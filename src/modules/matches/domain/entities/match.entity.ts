@@ -70,6 +70,7 @@ export class MatchLeague {
   flag?: string | null;
   season: number;
   round: string;
+  matches?: Match[] = [];
 }
 
 class Team {
@@ -162,8 +163,11 @@ export class Match {
       updatedAt: props.updatedAt || currentDate,
     });
   }
+}
 
-  eventExists(newEvent: MatchEvent): boolean {
-    return this.events.some((event) => event.id === newEvent.id);
-  }
+export function eventExistsInMatch(
+  match: Match,
+  newEvent: MatchEvent,
+): boolean {
+  return match.events.some((event) => event.id === newEvent.id);
 }

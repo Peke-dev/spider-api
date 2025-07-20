@@ -22,7 +22,7 @@ export class FindAllMatchesUseCase {
   async execute(
     queryParams: FindMatchesQueryDto = {},
     options: FindAllOptionsDto = {},
-  ): Promise<Omit<Match, 'eventExists'>[]> {
+  ): Promise<Match[]> {
     const dateFormat = 'YYYY-MM-DD';
 
     const {
@@ -71,10 +71,14 @@ export class FindAllMatchesUseCase {
     }
 
     if (league) {
-      query['league.id'] = league;
+      if (Array.isArray(league)) {
+        query['league.id'] = { $in: league };
+      } else {
+        query['league.id'] = league;
+      }
     }
 
-    if (statusType) {
+    if (statusType && statusType.length) {
       query['status.type'] = { $in: statusType };
     }
 

@@ -9,6 +9,7 @@ import {
   Match,
   MatchEvent,
   MatchTypeEnum,
+  eventExistsInMatch,
 } from '../../domain';
 import { UpdateMatchDto } from '../dto';
 
@@ -99,7 +100,7 @@ export class UpdateMatchUseCase {
       newMatchEvents.length > match.events.length
     ) {
       const newEvents = newMatchEvents.filter(
-        (event) => !match.eventExists(event),
+        (event) => !eventExistsInMatch(match, event),
       );
 
       newEvents.forEach((event) => {
