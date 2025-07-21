@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { LoggerModule } from 'nestjs-pino';
+
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { configuration, GlobalConfigType, validationSchema } from '@config';
@@ -13,10 +13,11 @@ import { AuthModule, TokenAuthGuard, ScopesAuthGuard } from '@modules/auth';
 
 import { AppController } from './app.controller';
 import { WebhooksModule } from '@modules/webhooks';
+import { LoggerModule } from '@modules/logger';
 
 @Module({
   imports: [
-    LoggerModule.forRoot(),
+    LoggerModule.forRoot({ env: process.env.NODE_ENV || 'dev' }),
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -1,18 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { Logger } from 'nestjs-pino';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { configuration, GlobalConfigType } from './config';
 import { AppModule } from './app.module';
 import { CleanUndefinedPipe } from './infrastructure/pipes';
-
-let logger: Logger;
+import { LoggerService } from '@modules/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
-  logger = await app.resolve<Logger>(Logger);
+  const logger = await app.resolve<LoggerService>(LoggerService);
+
+  logger.setContext('Main');
+
+  app.useLogger(logger);
 
   const config = await app.resolve<GlobalConfigType>(configuration.KEY);
 
@@ -24,8 +26,6 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
-      skipUndefinedProperties: true,
-      skipNullProperties: true,
     }),
     new CleanUndefinedPipe(),
   );
