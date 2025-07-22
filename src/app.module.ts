@@ -17,7 +17,7 @@ import { LoggerModule } from '@modules/logger';
 
 @Module({
   imports: [
-    LoggerModule.forRoot({ env: process.env.NODE_ENV || 'dev' }),
+    LoggerModule.forRoot({ env: process.env.NODE_ENV || 'production' }),
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,

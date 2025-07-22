@@ -8,13 +8,6 @@ import { Season } from '../../domain/entities/season.entity';
 @Schema({
   timestamps: true,
   collection: 'leagues',
-  toJSON: {
-    transform: (_, ret) => {
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    },
-  },
 })
 export class League {
   @Prop({ required: true, unique: true, index: true })

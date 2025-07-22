@@ -8,13 +8,6 @@ import {
 @Schema({
   timestamps: true,
   collection: 'webhooks',
-  toJSON: {
-    transform: (_, ret) => {
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    },
-  },
 })
 export class WebhookSchema extends Document {
   @Prop({ required: true, unique: true, index: true })

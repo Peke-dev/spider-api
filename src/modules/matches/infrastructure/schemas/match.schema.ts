@@ -59,13 +59,6 @@ export class StatusSchema {
 @Schema({
   timestamps: true,
   collection: 'matches',
-  toJSON: {
-    transform: (_, ret) => {
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    },
-  },
 })
 export class Match {
   @Prop({ required: true, unique: true, index: true })
