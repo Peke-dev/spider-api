@@ -38,6 +38,7 @@
     "class-validator": "^0.14.1",
     "dayjs": "^1.11.13",
     "deep-diff": "^1.0.2",
+    "express": "^5.1.0",
     "firebase-admin": "^13.1.0",
     "joi": "^17.13.3",
     "mongoose": "^8.13.2",
