@@ -29,7 +29,7 @@ WORKDIR /usr/src/app
 
 # Instala pnpm globalmente
 RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm add -g @nestjs/cli
+RUN npm add -g @nestjs/cli
 
 COPY --chown=node:node package.json pnpm-lock.yaml ./
 
