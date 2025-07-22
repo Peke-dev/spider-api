@@ -36,11 +36,16 @@ async function bootstrap() {
       'A powerful REST API for retrieving football (soccer) data including leagues, matches, and teams.',
     )
     .setVersion('1.0')
-    .addBearerAuth()
-    .addServer('https://api.spiderfootball.com')
-    .build();
+    .addBearerAuth();
 
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  if (config.DOCS_SERVER_URL) {
+    swaggerConfig.addServer(config.DOCS_SERVER_URL);
+  }
+
+  const swaggerDocument = SwaggerModule.createDocument(
+    app,
+    swaggerConfig.build(),
+  );
 
   SwaggerModule.setup('docs', app, swaggerDocument, {
     jsonDocumentUrl: 'docs/json',
