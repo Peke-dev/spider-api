@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
+  IsNumber,
   IsOptional,
   IsUUID,
   Matches,
@@ -35,13 +36,32 @@ export class FindMatchesQueryDto {
   @Transform(({ value }) => value.toUpperCase().trim())
   status?: MatchShortStatusEnum;
 
-  @IsUUID()
-  @IsOptional()
   @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174000',
-    required: false,
+    example: [
+      '123e4567-e89b-12d3-a456-426614174000',
+      '223e4567-e89b-12d3-a456-426614174000',
+    ],
+    required: true,
+    isArray: true,
+    description:
+      'League IDs (UUID). Can be a comma-separated string or an array.',
   })
-  league?: string;
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') return value.split(',').map((v) => v.trim());
+    return value;
+  })
+  @IsUUID('all', { each: true })
+  league: string[];
+
+  @ApiProperty({
+    example: 2023,
+    required: true,
+    description: 'Season year (e.g., 2023)',
+    type: Number,
+  })
+  @IsNumber()
+  season: number;
 
   @IsEnum(DateStringEnum)
   @IsOptional()

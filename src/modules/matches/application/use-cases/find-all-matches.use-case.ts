@@ -20,7 +20,7 @@ export class FindAllMatchesUseCase {
   constructor(private readonly repository: MatchRepository) {}
 
   async execute(
-    queryParams: FindMatchesQueryDto = {},
+    queryParams: FindMatchesQueryDto,
     options: FindAllOptionsDto = {},
   ): Promise<Omit<Match, 'eventExists'>[]> {
     const dateFormat = 'YYYY-MM-DD';
@@ -32,6 +32,7 @@ export class FindAllMatchesUseCase {
       to,
       dateString,
       timezone = TimezoneEnum.UTC,
+      season,
     } = queryParams;
     let { from } = queryParams;
 
@@ -70,8 +71,14 @@ export class FindAllMatchesUseCase {
       };
     }
 
-    if (league) {
+    if (league && Array.isArray(league)) {
+      query['league.id'] = { $in: league };
+    } else if (league) {
       query['league.id'] = league;
+    }
+
+    if (season) {
+      query['league.season'] = season;
     }
 
     if (statusType) {
