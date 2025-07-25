@@ -57,6 +57,10 @@ export class MongooseRepository<T extends Document, D>
     return id;
   }
 
+  async count(query?: QueryOptions<T>): Promise<number> {
+    return this.model.countDocuments(query || {}).exec();
+  }
+
   toDomain(_data: Document): D {
     throw new Error('Method toDomain not implemented');
   }

@@ -69,4 +69,13 @@ export class FindMatchesQueryDto {
   @IsOptional()
   @ApiProperty({ example: TimezoneEnum.UTC, required: false })
   timezone?: TimezoneEnum;
+
+  @ApiProperty({
+    example: 1,
+    required: false,
+    description: 'Page number for pagination (default: 1)',
+  })
+  @Transform(({ value }) => (value ? parseInt(value, 10) : 1))
+  @IsOptional()
+  page?: number;
 }

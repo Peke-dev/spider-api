@@ -18,7 +18,19 @@ export class MatchMongooseRepository extends BaseRepository<
     query?: QueryOptions<MatchDocument>,
     options?: FindAllOptionsDto,
   ): Promise<Match[]> {
-    return await super.findAll(query || {}, options);
+    const skip = options?.skip ?? 0;
+    const limit = options?.limit ?? 20;
+    return (
+      await this.matchModel
+        .find(query || {})
+        .skip(skip)
+        .limit(limit)
+        .exec()
+    ).map((doc) => this.toDomain(doc));
+  }
+
+  async count(query?: QueryOptions<MatchDocument>): Promise<number> {
+    return this.matchModel.countDocuments(query || {}).exec();
   }
 
   toDomain(match: MatchDocument): Match {

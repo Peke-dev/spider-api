@@ -22,7 +22,7 @@ export class FindAllMatchesUseCase {
   async execute(
     queryParams: FindMatchesQueryDto = {},
     options: FindAllOptionsDto = {},
-  ): Promise<Omit<Match, 'eventExists'>[]> {
+  ): Promise<{ matches: Omit<Match, 'eventExists'>[]; total: number }> {
     const dateFormat = 'YYYY-MM-DD';
 
     const {
@@ -82,12 +82,21 @@ export class FindAllMatchesUseCase {
       query['status.short'] = status;
     }
 
-    const matches = await this.repository.findAll(query, options);
+    const matches = await this.repository.findAll(query, {
+      ...options,
+      skip: ((queryParams.page ?? 1) - 1) * 20,
+      limit: 20,
+    });
 
-    return matches.map((match) => ({
-      ...match,
-      date: dayjs.utc(match.date).tz(timezone).format(),
-      timezone,
-    }));
+    const total = await this.repository.count(query);
+
+    return {
+      matches: matches.map((match) => ({
+        ...match,
+        date: dayjs.utc(match.date).tz(timezone).format(),
+        timezone,
+      })),
+      total,
+    };
   }
 }

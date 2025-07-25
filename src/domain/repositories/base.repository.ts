@@ -5,4 +5,5 @@ export abstract class BaseRepository<T> {
   abstract update(id: string, data: unknown): Promise<string>;
   abstract findOneBy(key: string, value: any): Promise<T | null>;
   abstract toDomain(data: unknown): T;
+  abstract count(query?: unknown): Promise<number>;
 }

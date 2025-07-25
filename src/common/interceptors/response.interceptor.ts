@@ -14,11 +14,24 @@ export class ResponseInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse<Response>();
 
     return next.handle().pipe(
-      map((data: any[]) => ({
-        statusCode: response.statusCode,
-        data: data,
-        length: data.length,
-      })),
+      map((res: any) => {
+        const { total, data } = res;
+
+        if (total && data) {
+          return {
+            statusCode: response.statusCode,
+            data,
+            length: data.length,
+            total,
+          };
+        }
+
+        return {
+          statusCode: response.statusCode,
+          data: res,
+          total,
+        };
+      }),
     );
   }
 }

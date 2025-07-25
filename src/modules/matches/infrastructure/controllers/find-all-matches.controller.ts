@@ -43,7 +43,8 @@ export class FindAllMatchesController {
   })
   async findAll(
     @Query() query: FindMatchesQueryDto,
-  ): Promise<MatchResponseDto[]> {
-    return this.findAllMatchesUseCase.execute(query);
+  ): Promise<{ data: MatchResponseDto[]; total: number }> {
+    const { matches, total } = await this.findAllMatchesUseCase.execute(query);
+    return { data: matches, total };
   }
 }

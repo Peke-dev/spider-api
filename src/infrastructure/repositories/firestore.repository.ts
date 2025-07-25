@@ -78,6 +78,11 @@ export class FirestoreRepository<T> implements BaseRepository<T> {
     return id;
   }
 
+  async count(query: any): Promise<number> {
+    const snapshot = await this.collectionRef.where(query).get();
+    return snapshot.size;
+  }
+
   toDomain(data: any): T {
     console.error('Not implemented');
     return data;
